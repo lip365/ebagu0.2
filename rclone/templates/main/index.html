@@ -1,0 +1,40 @@
+{% extends 'base.html'%}
+{% load static %}
+
+
+{% block content %}
+
+	<div class="row placeholders">
+		<div class="col-sm-8">
+			<div class="row">
+				
+				<ul>
+				{% for post in latest_posts %}
+				<h3><a href="{{ post.slug }}">{{ post.title }}</a></h3>
+				<p><em>{{ post.created_at }}</em></p>
+				
+
+				<br>
+				{% endfor %}
+				</ul>
+				
+			</div>
+		</div>
+
+		<div class="col-sm-4">
+			<div class="row">
+				<a href="/add_category/">Add a New Category</a><br />
+				{% if categories %}
+					<ul>
+						{% for category in categories %}
+						<li><a href="/category/{{category.slug}}">{{category.name}}</li>
+						{% endfor %}
+					</ul>
+				{% endif %}
+				<br>
+					<a href="/add_post/">Add a new post</a>
+				
+				
+			</div>
+		</div>
+{%endblock%}

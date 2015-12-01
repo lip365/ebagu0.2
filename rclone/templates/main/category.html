@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{category_name}}</h1>
+{% if category %}
+	{%if posts %}
+	<ul>
+		{% for post in posts %}
+		<h3><a href="/{{ post.slug }}">{{ post.title }}</a></h3>
+
+		{% endfor %}
+	</ul>
+	{%else%}
+		<strong>No Pages </strong>
+	{% endif %}
+{% else %}
+{{category_name}} does not exist
+{% endif %}
+
+{% endblock %}
