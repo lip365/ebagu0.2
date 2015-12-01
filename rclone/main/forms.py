@@ -18,7 +18,7 @@ class UserProfileForm(forms.ModelForm):
 		fields = ('website', 'picture')
 
 class CategoryForm(forms.ModelForm):
-	name = forms.CharField(max_length=128, help_text="커뮤니티 이름을 적어주세요")
+	name = forms.CharField(max_length=128, help_text="plz enter")
 	likes = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
 	slug = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -27,7 +27,7 @@ class CategoryForm(forms.ModelForm):
 		fields =('name',)
 
 class PostForm(forms.ModelForm):
-	title = forms.CharField(max_length=128, help_text="제목을 입력해주세요")
+	title = forms.CharField(max_length=128, help_text="plz enter")
 	views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
 	class Meta:
 		model = Post
