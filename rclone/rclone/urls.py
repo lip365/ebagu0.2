@@ -23,5 +23,6 @@ urlpatterns = [
     #url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': MEDIA_ROOT}),
  
     url(r'^accounts/', include('userena.urls')),
+    url(r'^comments/', include('django_comments_xtd.urls')), 
 
 ]

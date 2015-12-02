@@ -47,6 +47,9 @@ INSTALLED_APPS = (
     'guardian',
     'easy_thumbnails',
     'userena',
+    'django_comments_xtd',
+    'django.contrib.comments',
+
 
 )
 
@@ -136,10 +139,14 @@ USERENA_SIGNIN_REDIRECT_URL = '/accounts/%(username)s/'
 LOGIN_URL = '/accounts/signin/'
 LOGOUT_URL = '/accounts/signout/'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'asddfa@gmail.com'
-EMAIL_HOST_PASSWORD = 'abcdefagadsfa'
+EMAIL_HOST_USER = 'younggue.kim1@gmail.com'
+EMAIL_HOST_PASSWORD = 'xornjseh1'
 
 SITE_ID = 1
+
+COMMENTS_APP = "django_comments_xtd"
+COMMENTS_XTD_CONFIRM_EMAIL = True
