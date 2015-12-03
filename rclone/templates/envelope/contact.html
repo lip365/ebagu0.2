@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load envelope_tags %}
+
+{% block default-active %}active{% endblock %}
+
+{% block content %}
+    <form action="{% url 'envelope-contact' %}" method="post">
+        {% csrf_token %}
+        {% antispam_fields %}
+        {{ form.as_p }}
+        <input type="submit" value="Send!" />
+    </form>
+{% endblock %}

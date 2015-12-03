@@ -5,7 +5,9 @@ from django.shortcuts import get_object_or_404, render_to_response, redirect
 # Create your views here.
 from main.models import Post, Category
 from main.forms import UserForm, UserProfileForm, CategoryForm, PostForm
-
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 #for front page
 def index(request):
 
@@ -66,7 +68,7 @@ def add_category(request):
 	return render(request, 'main/add_category.html', {'form':form})
 
 #for adding post/see diff style :)
-
+"""
 def add_post(request):
     context = RequestContext(request)
     if request.method == 'POST':
@@ -80,3 +82,44 @@ def add_post(request):
         form = PostForm()
     return render_to_response('main/add_post.html', {'form': form}, context)
 
+"""
+class PostCreateView(CreateView):
+   model = Post
+   form_class = PostForm
+   template_name = 'form.html'
+
+   def form_valid(self, form):
+      self.object = form.save(commit=False)
+      # any manual settings go here
+      self.object.save()
+      return HttpResponseRedirect(self.object.get_absolute_url())
+
+   @method_decorator(login_required)
+   def dispatch(self, request, *args, **kwargs):
+      return super(PostCreateView, self).dispatch(request, *args, **kwargs)
+
+class PostUpdateView(UpdateView):
+   model = Post
+   form_class = PostForm
+   template_name = 'form.html'
+
+   def form_valid(self, form):
+      self.object = form.save(commit=False)
+      # Any manual settings go here
+      self.object.save()
+      return HttpResponseRedirect(self.object.get_absolute_url())
+
+   @method_decorator(login_required)
+   def dispatch(self, request, *args, **kwargs):
+     return super(PostUpdateView, self).dispatch(request, *args, **kwargs)
+
+
+class PostDeleteView(DeleteView):
+   model = Post
+
+   def get_success_url(self):
+      return reverse('post-index')  # Or whatever you need
+
+   @method_decorator(login_required)
+   def dispatch(self, request, *args, **kwargs):
+      return super(PostDeleteView, self).dispatch(request, *args, **kwargs)

@@ -49,6 +49,8 @@ INSTALLED_APPS = (
     'userena',
     'django_comments_xtd',
     'django_comments',
+    'envelope',
+    'honeypot',
 
 
 )
@@ -93,7 +95,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'django_db',
         'USER':'djangousr',
-        'PASSWORD':'xornjseh1',
+        'PASSWORD':'123',
         'HOST':'localhost',
         'PORT':'5432',
     }
@@ -147,10 +149,13 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'younggue.kim1@gmail.com'
-EMAIL_HOST_PASSWORD = 'xornjseh1'
+EMAIL_HOST_USER = '123'
+EMAIL_HOST_PASSWORD = '123'
 
 SITE_ID = 1
 
 COMMENTS_APP = "django_comments_xtd"
 COMMENTS_XTD_CONFIRM_EMAIL = True
+
+
+HONEYPOT_FIELD_NAME = 'email2'
