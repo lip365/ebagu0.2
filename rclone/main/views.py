@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse 
+from django.http import HttpResponse, HttpResponseRedirect 
 from django.template import Context, loader,RequestContext
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 # Create your views here.
@@ -8,24 +8,25 @@ from main.forms import UserForm, UserProfileForm, CategoryForm, PostForm
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.shortcuts import render
+from django.core.urlresolvers import reverse 
+
 #for front page
+
 def index(request):
 
-	categories = Category.objects.order_by('likes')[:5]
-	latest_posts = Post.objects.all().order_by('-created_at')
-	popular_posts = Post.objects.all().order_by('-views')
-	hot_posts = Post.objects.all().order_by('-score')[:25]
+    categories = Category.objects.order_by('likes')[:5]
+    latest_posts = Post.objects.all().order_by('-created_at')
+    popular_posts = Post.objects.all().order_by('-views')
+    hot_posts = Post.objects.all().order_by('-score')[:25]
 
-	t = loader.get_template('main/index.html')
-	context_dict = {
-		'latest_posts' :latest_posts,
-		'popular_posts' :popular_posts,
-		'hot_posts' :hot_posts,
-		'categories':categories
-}
-	c = Context(context_dict)
-	return HttpResponse(t.render(c))
-
+    context_dict = {
+        'latest_posts': latest_posts,
+        'popular_posts': popular_posts,
+        'hot_posts': hot_posts,
+        'categories': categories
+    }
+    return render(request, 'main/index.html', context_dict)
 #for single-post page
 #we use uuslug 
 def post(request, slug):
@@ -67,41 +68,30 @@ def add_category(request):
 
 	return render(request, 'main/add_category.html', {'form':form})
 
-#for adding post/see diff style :)
-"""
-def add_post(request):
-    context = RequestContext(request)
-    if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)
-        if form.is_valid():  # is the form valid?
-            form.save(commit=True)  # yes? save to database
-            return redirect(index)
-        else:
-            print form.errors  # no? display errors to end user
-    else:
-        form = PostForm()
-    return render_to_response('main/add_post.html', {'form': form}, context)
 
-"""
+
 class PostCreateView(CreateView):
+
    model = Post
    form_class = PostForm
-   template_name = 'form.html'
+   template_name = 'main/add_post.html'
 
    def form_valid(self, form):
       self.object = form.save(commit=False)
       # any manual settings go here
       self.object.save()
-      return HttpResponseRedirect(self.object.get_absolute_url())
+      return HttpResponseRedirect(reverse('post', args=[self.object.slug]))
 
    @method_decorator(login_required)
    def dispatch(self, request, *args, **kwargs):
       return super(PostCreateView, self).dispatch(request, *args, **kwargs)
+  
+
 
 class PostUpdateView(UpdateView):
    model = Post
    form_class = PostForm
-   template_name = 'form.html'
+   template_name = 'main/edit.html'
 
    def form_valid(self, form):
       self.object = form.save(commit=False)
@@ -114,12 +104,14 @@ class PostUpdateView(UpdateView):
      return super(PostUpdateView, self).dispatch(request, *args, **kwargs)
 
 
+
 class PostDeleteView(DeleteView):
    model = Post
 
    def get_success_url(self):
-      return reverse('post-index')  # Or whatever you need
+      return "/" 
 
    @method_decorator(login_required)
    def dispatch(self, request, *args, **kwargs):
       return super(PostDeleteView, self).dispatch(request, *args, **kwargs)
+

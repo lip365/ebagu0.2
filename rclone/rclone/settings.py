@@ -41,13 +41,14 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'main',
     'accounts',
+    
 
     #3rd party apps
     'django_forms_bootstrap',
     'guardian',
     'easy_thumbnails',
     'userena',
-    'django_comments_xtd',
+    'disqus',
     'django_comments',
     'envelope',
     'honeypot',
@@ -95,7 +96,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'django_db',
         'USER':'djangousr',
-        'PASSWORD':'123',
+        'PASSWORD':'xornjseh1',
         'HOST':'localhost',
         'PORT':'5432',
     }
@@ -149,13 +150,13 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = '123'
-EMAIL_HOST_PASSWORD = '123'
+EMAIL_HOST_USER = 'younggue.kim1@gmail.com'
+EMAIL_HOST_PASSWORD = 'xornjseh1'
 
 SITE_ID = 1
 
-COMMENTS_APP = "django_comments_xtd"
-COMMENTS_XTD_CONFIRM_EMAIL = True
-
-
 HONEYPOT_FIELD_NAME = 'email2'
+
+DISQUS_API_KEY = 'MWIe4SAYeXBPqYEQs60rlo4GF85VAt952ITY7zHasQEI0yAe8iTem48b3IkPQd5a'
+DISQUS_SECRET_KEY = 'niGpR5Gx0yJiVFOF02RtlfFCda5kOTirGXeJ1boU9EoUITTg1HsYDSTFiv8xZCqg'
+DISQUS_WEBSITE_SHORTNAME = 'ebagu'
