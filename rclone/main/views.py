@@ -1,3 +1,4 @@
+
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect 
 from django.template import Context, loader,RequestContext
@@ -33,40 +34,39 @@ def post(request, slug):
     single_post = get_object_or_404(Post, slug=slug)
     single_post.views += 1  # increment the number of views
     single_post.save()      # and save it
-    t = loader.get_template('main/post.html')
     context_dict = {
-        'single_post': single_post,
+      'single_post' :single_post,
     }
-    c = Context(context_dict)
-    return HttpResponse(t.render(c))
+  
+    return render(request, 'main/post.html', context_dict)
 #for category page
 #we use slugfield this time 
 def category(request, category_name_slug):
-	context_dict = {}
-	try:
-		category = Category.objects.get(slug=category_name_slug)
-		context_dict['category_name'] = category.name
+  context_dict = {}
+  try:
+    category = Category.objects.get(slug=category_name_slug)
+    context_dict['category_name'] = category.name
 
-		posts = Post.objects.filter(category=category)
-		context_dict['posts'] = posts
-		context_dict['category'] = category
-	except Category.DoesNotExist:
-		pass
+    posts = Post.objects.filter(category=category)
+    context_dict['posts'] = posts
+    context_dict['category'] = category
+  except Category.DoesNotExist:
+    pass
 
-	return render(request, 'main/category.html', context_dict)
+  return render(request, 'main/category.html', context_dict)
 #for adding category
 def add_category(request):
-	if request.method == 'POST':
-		form = CategoryForm(request.POST)
-		if form.is_valid():
-			form.save(commit=True)
-			return index(request)
-		else:
-			print form.errors
-	else:
-		form = CategoryForm()
+  if request.method == 'POST':
+    form = CategoryForm(request.POST)
+    if form.is_valid():
+      form.save(commit=True)
+      return index(request)
+    else:
+      print form.errors
+  else:
+    form = CategoryForm()
 
-	return render(request, 'main/add_category.html', {'form':form})
+  return render(request, 'main/add_category.html', {'form':form})
 
 
 
@@ -114,4 +114,3 @@ class PostDeleteView(DeleteView):
    @method_decorator(login_required)
    def dispatch(self, request, *args, **kwargs):
       return super(PostDeleteView, self).dispatch(request, *args, **kwargs)
-
