@@ -4,8 +4,6 @@ from django.contrib.auth.models import User
 from main.models import Category, Post, UserProfile
 from froala_editor.widgets import FroalaEditor
 
-
-
 class UserForm(forms.ModelForm):
 	password = forms.CharField(widget=forms.PasswordInput())
 
@@ -32,7 +30,6 @@ class PostForm(forms.ModelForm):
 	title = forms.CharField(max_length=128, help_text="plz enter")
 	views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
 	content = forms.CharField(widget=FroalaEditor)
-
 	class Meta:
 		model = Post
 		fields = ['title', 'content', 'views', 'category']
