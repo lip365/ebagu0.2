@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'main',
     'accounts',
+
     
 
     #3rd party apps
@@ -49,6 +50,7 @@ INSTALLED_APPS = (
     'django_comments',
     'envelope',
     'honeypot',
+    'froala_editor'
 
 
 )
@@ -157,3 +159,14 @@ HONEYPOT_FIELD_NAME = 'email2'
 DISQUS_API_KEY = 'MWIe4SAYeXBPqYEQs60rlo4GF85VAt952ITY7zHasQEI0yAe8iTem48b3IkPQd5a'
 DISQUS_SECRET_KEY = 'niGpR5Gx0yJiVFOF02RtlfFCda5kOTirGXeJ1boU9EoUITTg1HsYDSTFiv8xZCqg'
 DISQUS_WEBSITE_SHORTNAME = 'ebagu'
+
+FROALA_EDITOR_BUTTONS = ('bold', 'italic', 'strikeThrough', 'underline', '|', 'color', 'fontSize', 'paragraphFormat', 'align',
+                         'formatOL', 'formatUL',  '|', 'insertImage', 'insertLink', 'quote', 'insertHR', '|', 'undo', 'redo', 'clearFormatting', '|' , 'html', 'fullscreen')
+FROALA_EDITOR_OPTIONS = {
+    'language': 'ko',
+    'heightMin': 500,
+    'toolbarButtons': FROALA_EDITOR_BUTTONS
+}
+FROALA_EDITOR_PLUGINS = ('align', 'char_counter', 'code_view', 'colors', 'file',
+        'font_size','image', 'link', 'lists', 'paragraph_format', 'quote', 'table', 'url', 'fullscreen')
+FROALA_EDITOR_THEME = 'gray'

@@ -13,7 +13,7 @@ urlpatterns = [
     url(r'^(?P<slug>[\w|\-]+)/delete/$', PostDeleteView.as_view(), name='post-delete'),
 
 
-	url(r'^add_category/', views.add_category, name='add_category'),
+	url(r'^add_category/', login_required(views.add_category), name='add_category'),
 	url(r'^(?P<slug>[\w|\-]+)/$', views.post, name='post'),
 
 	url(r'^category/(?P<category_name_slug>[\w\-]+)/$', views.category, name='category'),

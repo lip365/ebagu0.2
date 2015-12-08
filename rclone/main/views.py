@@ -55,6 +55,7 @@ def category(request, category_name_slug):
 
   return render(request, 'main/category.html', context_dict)
 #for adding category
+
 def add_category(request):
   if request.method == 'POST':
     form = CategoryForm(request.POST)

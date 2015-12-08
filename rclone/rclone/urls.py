@@ -22,6 +22,7 @@ from envelope.views import ContactView
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^contact/', include('envelope.urls')),
+    url(r'^froala_editor/', include('froala_editor.urls')),
 
    
     #url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': MEDIA_ROOT}),
