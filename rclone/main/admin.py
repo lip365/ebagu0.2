@@ -1,5 +1,5 @@
 from django.contrib import admin
-from main.models import Post, Category
+from main.models import Post, Category, Vote
 # Register your models here.
 
 class PageAdmin(admin.ModelAdmin):
@@ -12,3 +12,4 @@ class CatAdmin(admin.ModelAdmin):
 
 admin.site.register(Post, PageAdmin)
 admin.site.register(Category, CatAdmin)
+admin.site.register(Vote)

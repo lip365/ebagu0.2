@@ -50,7 +50,7 @@ INSTALLED_APPS = (
     'envelope',
     'honeypot',
     'froala_editor',
-
+    
 
 )
 
@@ -91,15 +91,10 @@ WSGI_APPLICATION = 'rclone.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'django_db',
-        'USER':'djangousr',
-        'PASSWORD':'xornjseh1',
-        'HOST':'localhost',
-        'PORT':'5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase',
     }
 }
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/

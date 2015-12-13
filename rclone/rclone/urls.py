@@ -2,7 +2,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.conf.urls import patterns, url
 from envelope.views import ContactView
-
+from django.contrib.auth.decorators import login_required as auth
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),

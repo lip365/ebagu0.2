@@ -3,23 +3,41 @@
 
 
 {% block content %}
-
+	<div>
 	<div class="row placeholders">
 		<div class="col-sm-8">
-			<div class="row">
-				
-				<ul>
-				{% for post in latest_posts %}
-				<h3><a href="{{ post.slug }}">{{ post.title }}</a></h3>
-				<p><em>{{ post.created_at }}</em></p>
-				
+			
+<table class="table">
+    {% if posts %}
+        {% for post in posts %}
+        <tr>
+            <td class="vert-align"><div>
+                            <a href="/post/{{ post.slug }}/vote?is_up=1" class="vote">
 
-				<br>
-				{% endfor %}
-				</ul>
-				
-			</div>
-		</div>
+                    <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a>
+                <br>
+                <a href="/post/{{ post.slug }}/vote?is_up=0"  class="vote">
+                    <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
+            </div></td>
+            <td class="vert-align">
+                <h4 id="vote_count_{{ post.slug }}">{{ post.get_vote_count }}</h4>
+            </td>
+            <td>
+                <h4><a href="{% url 'post' post.slug %}">{{ post.title }}</a></h4>
+                <ol class="breadcrumb">
+                    <li><span>{{ post.moderator.username }}</span></li>
+                    <li><span class="time_presentation">{{ post.pub_date | date }}</span></li>
+                </ol>
+            </td>
+        </tr>
+        {% endfor %}
+    {% else %}
+        <tr><td><div class="alert alert-info" role="alert">
+            <h3><a href="{% url 'post-add' %}">첫 글을 가장 먼저 적어보세요!</a></h3>
+        </div></td></tr>
+    {% endif %}
+</table>
+
 
 		<div class="col-sm-4">
 			<div class="row">
@@ -37,4 +55,7 @@
 				
 			</div>
 		</div>
+		</div>
+		</div>
+		{% include 'main/paginator.html' %}
 {%endblock%}

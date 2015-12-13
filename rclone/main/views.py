@@ -1,35 +1,61 @@
-
+import json
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect 
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest 
 from django.template import Context, loader,RequestContext
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 # Create your views here.
-from main.models import Post, Category
+from main.models import Post, Category, Vote
 from main.forms import UserForm, UserProfileForm, CategoryForm, PostForm
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
+from django.views.generic import ListView
+from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.shortcuts import render
 from django.core.urlresolvers import reverse 
+from django.core.paginator import Paginator
+from main.util.common import SortMethods
 
 #for front page
 
 def index(request):
+    """This view return index page. In index page, there is thread list.
+    And thread list can be sorted by score, number of comment, date, title using paging.
+    GET parameters are 'sort' and 'page'. 'sort' is sorting methods. 'page' is number of page.
+    :param request: Django request object
+    :return: Thread list page
+    """
+    try:
+        sort = request.GET["sort"].strip()
+        sort_method = SortMethods[sort]
+        page = request.GET["page"].strip()
+    except KeyError:
+        sort_method = SortMethods.score
+        page = 1
 
-    categories = Category.objects.order_by('likes')[:5]
-    latest_posts = Post.objects.all().order_by('-created_at')
-    popular_posts = Post.objects.all().order_by('-views')
-    hot_posts = Post.objects.all().order_by('-score')[:25]
+    if sort_method == SortMethods.date:
+        thread_list = Post.objects.order_by("-pub_date")
+    else:
+        thread_list = Post.objects.all()
+        thread_list = sorted(thread_list, key=lambda x: x.get_score(), reverse=True)
 
-    context_dict = {
-        'latest_posts': latest_posts,
-        'popular_posts': popular_posts,
-        'hot_posts': hot_posts,
-        'categories': categories
+    paginator = Paginator(thread_list, 30)
+
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+
+    context = {
+        "posts": posts,
+        "pages": paginator.page_range,
+        "sort": sort_method.name
     }
-    return render(request, 'main/index.html', context_dict)
+    return render(request, "main/index.html", context)
+
 #for single-post page
-#we use uuslug 
 def post(request, slug):
     single_post = get_object_or_404(Post, slug=slug)
     single_post.views += 1  # increment the number of views
@@ -40,21 +66,26 @@ def post(request, slug):
   
     return render(request, 'main/post.html', context_dict)
 #for category page
-#we use slugfield this time 
-def category(request, category_name_slug):
-  context_dict = {}
-  try:
-    category = Category.objects.get(slug=category_name_slug)
-    context_dict['category_name'] = category.name
+class CategoryDetailView(DetailView):
+    model = Category
+    template_name = 'main/category.html'
+    context_object_name = 'category'
+    # note that these are already "slug" by default
+    pk_url_kwarg = 'slug'
+    slug_field = 'slug'
 
-    posts = Post.objects.filter(category=category)
-    context_dict['posts'] = posts
-    context_dict['category'] = category
-  except Category.DoesNotExist:
-    pass
+    def get_context_date(self, **kwargs):
+        context = super(CategoryDetailView, self).get_context_data(**kwargs)
+        context.update({
+            # really no need to put category_name in context
+            # as you can simply do {{ category.name }} in your template
 
-  return render(request, 'main/category.html', context_dict)
-#for adding category
+            # you can use relations to query related data
+            'posts': self.object.post_set.all()
+        })
+        return context
+
+@login_required
 def add_category(request):
   if request.method == 'POST':
     form = CategoryForm(request.POST)
@@ -114,3 +145,40 @@ class PostDeleteView(DeleteView):
    @method_decorator(login_required)
    def dispatch(self, request, *args, **kwargs):
       return super(PostDeleteView, self).dispatch(request, *args, **kwargs)
+
+
+
+def vote(request, slug):
+    """This view is intended to use ajax and handle vote.
+    Checking GET parameter 'is_up' decide upvote or devote.
+    :param request: Django request object
+    :param thread_id: Voted thread id
+    :return: If success, sum of upvote and devote. if not, error message
+    """
+    try:
+        error_message = "Not a valid request"
+        is_up = int(request.GET["is_up"].strip())
+        if is_up == 1 or is_up == 0:
+            if not request.user.is_authenticated():
+                error_message = "please login"
+            else:
+                post = get_object_or_404(Post, slug=slug)
+                try:
+                    vote = post.vote_set.get(user=request.user)
+                except Vote.DoesNotExist:
+                    post.vote_set.create(user=request.user, is_up=is_up)
+                else:
+                    if vote.is_up == is_up:
+                        vote.delete()
+                    else:
+                        vote.is_up = is_up
+                        vote.save()
+
+                json_data = '{"count":"%s"}' % post.get_vote_count()
+                return HttpResponse(json_data, content_type="application/json; charset=utf-8")
+    except KeyError:
+        json_data = '{"error_message":"%s"}' % "Not a valid request"
+        return HttpResponseBadRequest(json_data, content_type="application/json; charset=utf-8")
+    else:
+        json_data = '{"error_message":"%s"}' % error_message
+        return HttpResponseBadRequest(json_data, content_type="application/json; charset=utf-8")

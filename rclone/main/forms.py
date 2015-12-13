@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*- 
 from django import forms
 from django.contrib.auth.models import User
-from main.models import Category, Post, UserProfile
+from main.models import Category, Post, UserProfile, Vote
 from froala_editor.widgets import FroalaEditor
+
 
 class UserForm(forms.ModelForm):
 	password = forms.CharField(widget=forms.PasswordInput())
