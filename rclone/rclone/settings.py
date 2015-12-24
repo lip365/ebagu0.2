@@ -28,59 +28,59 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
-    'suit',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.sites',
-    'main',
-    'accounts',
-    
+	'suit',
+	'django.contrib.admin',
+	'django.contrib.auth',
+	'django.contrib.contenttypes',
+	'django.contrib.sessions',
+	'django.contrib.messages',
+	'django.contrib.staticfiles',
+	'django.contrib.sites',
+	'main',
+	'accounts',
+	
 
-    #3rd party apps
-    'django_forms_bootstrap',
-    'guardian',
-    'easy_thumbnails',
-    'userena',
-    'disqus',
-    'django_comments',
-    'envelope',
-    'honeypot',
-    'froala_editor',
-    
+	#3rd party apps
+	'django_forms_bootstrap',
+	'guardian',
+	'easy_thumbnails',
+	'userena',
+	'disqus',
+	'django_comments',
+	'envelope',
+	'honeypot',
+	'froala_editor',
+	
 
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
+	'django.contrib.sessions.middleware.SessionMiddleware',
+	'django.middleware.common.CommonMiddleware',
+	'django.middleware.csrf.CsrfViewMiddleware',
+	'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+	'django.contrib.messages.middleware.MessageMiddleware',
+	'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'django.middleware.security.SecurityMiddleware',
 )
 
 ROOT_URLCONF = 'rclone.urls'
 
 TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join (BASE_DIR,'templates')],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
+	{
+		'BACKEND': 'django.template.backends.django.DjangoTemplates',
+		'DIRS': [os.path.join (BASE_DIR,'templates')],
+		'APP_DIRS': True,
+		'OPTIONS': {
+			'context_processors': [
+				'django.template.context_processors.debug',
+				'django.template.context_processors.request',
+				'django.contrib.auth.context_processors.auth',
+				'django.contrib.messages.context_processors.messages',
+			],
+		},
+	},
 ]
 
 WSGI_APPLICATION = 'rclone.wsgi.application'
@@ -90,18 +90,18 @@ WSGI_APPLICATION = 'rclone.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'mydatabase',
-    }
+	'default': {
+		'ENGINE': 'django.db.backends.sqlite3',
+		'NAME': 'mydatabase',
+	}
 }
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ko-kr'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
@@ -109,25 +109,29 @@ USE_L10N = True
 
 USE_TZ = True
 
+Date_Format = 'c'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_in_env", "media_root")
 MEDIA_URL = '/media/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_in_env", "static_root")
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static_in_pro", "our_static"),
+  
+)
 
-SUIT_CONFIG = {
-    'ADMIN_NAME': 'Hello'
-
-}
 
 
 AUTHENTICATION_BACKENDS = (
-    'userena.backends.UserenaAuthenticationBackend',
-    'guardian.backends.ObjectPermissionBackend',
-    'django.contrib.auth.backends.ModelBackend',
+	'userena.backends.UserenaAuthenticationBackend',
+	'guardian.backends.ObjectPermissionBackend',
+	'django.contrib.auth.backends.ModelBackend',
 )
 
 ANONYMOUS_USER_ID = -1  
@@ -157,12 +161,12 @@ DISQUS_WEBSITE_SHORTNAME = 'ebagu'
 
 
 FROALA_EDITOR_BUTTONS = ('bold', 'italic', 'strikeThrough', 'underline', '|', 'color', 'fontSize', 'paragraphFormat', 'align',
-                         'formatOL', 'formatUL',  '|', 'insertImage', 'insertLink', 'quote', 'insertHR', '|', 'undo', 'redo', 'clearFormatting', '|' , 'html', 'fullscreen')
+						 'formatOL', 'formatUL',  '|', 'insertImage', 'insertLink', 'quote', 'insertHR', '|', 'undo', 'redo', 'clearFormatting', '|' , 'html', 'fullscreen')
 FROALA_EDITOR_OPTIONS = {
-    'language': 'ko',
-    'heightMin': 500,
-    'toolbarButtons': FROALA_EDITOR_BUTTONS
+	'language': 'ko',
+	'heightMin': 500,
+	'toolbarButtons': FROALA_EDITOR_BUTTONS
 }
 FROALA_EDITOR_PLUGINS = ('align', 'char_counter', 'code_view', 'colors', 'file',
-        'font_size','image', 'link', 'lists', 'paragraph_format', 'quote', 'table', 'url', 'fullscreen')
+		'font_size','image', 'link', 'lists', 'paragraph_format', 'quote', 'table', 'url', 'fullscreen')
 FROALA_EDITOR_THEME = 'gray'

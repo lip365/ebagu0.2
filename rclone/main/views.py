@@ -19,166 +19,189 @@ from main.util.common import SortMethods
 #for front page
 
 def index(request):
-    """This view return index page. In index page, there is thread list.
-    And thread list can be sorted by score, number of comment, date, title using paging.
-    GET parameters are 'sort' and 'page'. 'sort' is sorting methods. 'page' is number of page.
-    :param request: Django request object
-    :return: Thread list page
-    """
-    try:
-        sort = request.GET["sort"].strip()
-        sort_method = SortMethods[sort]
-        page = request.GET["page"].strip()
-    except KeyError:
-        sort_method = SortMethods.score
-        page = 1
+		"""This view return index page. In index page, there is thread list.
+		And thread list can be sorted by score, number of comment, date, title using paging.
+		GET parameters are 'sort' and 'page'. 'sort' is sorting methods. 'page' is number of page.
+		:param request: Django request object
+		:return: Thread list page
+		"""
 
-    if sort_method == SortMethods.date:
-        thread_list = Post.objects.order_by("-pub_date")
-    else:
-        thread_list = Post.objects.all()
-        thread_list = sorted(thread_list, key=lambda x: x.get_score(), reverse=True)
+		categories = Category.objects.all()
 
-    paginator = Paginator(thread_list, 30)
+		try:
+				sort = request.GET["sort"].strip()
+				sort_method = SortMethods[sort]
+				page = request.GET["page"].strip()
+		except KeyError:
+				sort_method = SortMethods.score
+				page = 1
 
-    try:
-        posts = paginator.page(page)
-    except PageNotAnInteger:
-        posts = paginator.page(1)
-    except EmptyPage:
-        posts = paginator.page(paginator.num_pages)
+		if sort_method == SortMethods.date:
+				thread_list = Post.objects.order_by("-pub_date")
+		else:
+				thread_list = Post.objects.all()
+				thread_list = sorted(thread_list, key=lambda x: x.get_score(), reverse=True)
 
-    context = {
-        "posts": posts,
-        "pages": paginator.page_range,
-        "sort": sort_method.name
-    }
-    return render(request, "main/index.html", context)
+		paginator = Paginator(thread_list, 30)
+
+		try:
+				posts = paginator.page(page)
+		except PageNotAnInteger:
+				posts = paginator.page(1)
+		except EmptyPage:
+				posts = paginator.page(paginator.num_pages)
+
+		context = {
+				"posts": posts,
+				"pages": paginator.page_range,
+				"sort": sort_method.name,
+				"categories":categories
+		}
+		return render(request, "main/index.html", context)
 
 #for single-post page
 def post(request, slug):
-    single_post = get_object_or_404(Post, slug=slug)
-    single_post.views += 1  # increment the number of views
-    single_post.save()      # and save it
-    context_dict = {
-      'single_post' :single_post,
-    }
-  
-    return render(request, 'main/post.html', context_dict)
+		single_post = get_object_or_404(Post, slug=slug)
+		single_post.views += 1  # increment the number of views
+		single_post.save()      # and save it
+		context_dict = {
+			'single_post' :single_post,
+		}
+	
+		return render(request, 'main/post.html', context_dict)
 #for category page
-class CategoryDetailView(DetailView):
-    model = Category
-    template_name = 'main/category.html'
-    context_object_name = 'category'
-    # note that these are already "slug" by default
-    pk_url_kwarg = 'slug'
-    slug_field = 'slug'
+def category(request, category_name_slug):
+	try:
+		
+				category = Category.objects.get(slug=category_name_slug)
+				sort = request.GET["sort"].strip()
+				sort_method = SortMethods[sort]
+				page = request.GET["page"].strip()
+	except KeyError:
+				sort_method = SortMethods.score
+				page = 1
 
-    def get_context_date(self, **kwargs):
-        context = super(CategoryDetailView, self).get_context_data(**kwargs)
-        context.update({
-            # really no need to put category_name in context
-            # as you can simply do {{ category.name }} in your template
+	if sort_method == SortMethods.date:
+				thread_list = Post.objects.filter(category=category).order_by("-pub_date")
+	else:
+				thread_list = Post.objects.filter(category=category)
+				thread_list = sorted(thread_list, key=lambda x: x.get_score(), reverse=True)
 
-            # you can use relations to query related data
-            'posts': self.object.post_set.all()
-        })
-        return context
+	paginator = Paginator(thread_list, 30)
+
+	try:
+				posts = paginator.page(page)
+	except PageNotAnInteger:
+				posts = paginator.page(1)
+	except EmptyPage:
+				posts = paginator.page(paginator.num_pages)
+
+	context = {
+				"posts": posts,
+				"pages": paginator.page_range,
+				"sort": sort_method.name,
+				"categories":category,
+			  "cat_name_slug":category_name_slug,
+		}
+	return render(request, "main/index.html", context)
+
 
 @login_required
 def add_category(request):
-  if request.method == 'POST':
-    form = CategoryForm(request.POST)
-    if form.is_valid():
-      form.save(commit=True)
-      return index(request)
-    else:
-      print form.errors
-  else:
-    form = CategoryForm()
+	if request.method == 'POST':
+		form = CategoryForm(request.POST)
+		if form.is_valid():
+			form.save(commit=True)
+			return index(request)
+		else:
+			print form.errors
+	else:
+		form = CategoryForm()
 
-  return render(request, 'main/add_category.html', {'form':form})
+	return render(request, 'main/add_category.html', {'form':form})
 
 
 
 class PostCreateView(CreateView):
 
-   model = Post
-   form_class = PostForm
-   template_name = 'main/add_post.html'
+	 model = Post
+	 form_class = PostForm
+	 template_name = 'main/add_post.html'
 
-   def form_valid(self, form):
-      self.object = form.save(commit=False)
-      # any manual settings go here
-      self.object.save()
-      return HttpResponseRedirect(reverse('post', args=[self.object.slug]))
+	 def form_valid(self, form):
+			self.object = form.save(commit=False)
+			# any manual settings go here
+			self.object.moderator = self.request.user
+		
+			self.object.save()
+			return HttpResponseRedirect(reverse('post', args=[self.object.slug]))
 
-   @method_decorator(login_required)
-   def dispatch(self, request, *args, **kwargs):
-      return super(PostCreateView, self).dispatch(request, *args, **kwargs)
-  
+	 @method_decorator(login_required)
+	 def dispatch(self, request, *args, **kwargs):
+			return super(PostCreateView, self).dispatch(request, *args, **kwargs)
+	
 
 
 class PostUpdateView(UpdateView):
-   model = Post
-   form_class = PostForm
-   template_name = 'main/edit.html'
+	 model = Post
+	 form_class = PostForm
+	 template_name = 'main/edit.html'
 
-   def form_valid(self, form):
-      self.object = form.save(commit=False)
-      # Any manual settings go here
-      self.object.save()
-      return HttpResponseRedirect(self.object.get_absolute_url())
+	 def form_valid(self, form):
+			self.object = form.save(commit=False)
+			# Any manual settings go here
+			self.object.save()
+			return HttpResponseRedirect(self.object.get_absolute_url())
 
-   @method_decorator(login_required)
-   def dispatch(self, request, *args, **kwargs):
-     return super(PostUpdateView, self).dispatch(request, *args, **kwargs)
+	 @method_decorator(login_required)
+	 def dispatch(self, request, *args, **kwargs):
+		 return super(PostUpdateView, self).dispatch(request, *args, **kwargs)
 
 
 
 class PostDeleteView(DeleteView):
-   model = Post
+	 model = Post
 
-   def get_success_url(self):
-      return "/" 
+	 def get_success_url(self):
+			return "/" 
 
-   @method_decorator(login_required)
-   def dispatch(self, request, *args, **kwargs):
-      return super(PostDeleteView, self).dispatch(request, *args, **kwargs)
+	 @method_decorator(login_required)
+	 def dispatch(self, request, *args, **kwargs):
+			return super(PostDeleteView, self).dispatch(request, *args, **kwargs)
 
 
 
 def vote(request, slug):
-    """This view is intended to use ajax and handle vote.
-    Checking GET parameter 'is_up' decide upvote or devote.
-    :param request: Django request object
-    :param thread_id: Voted thread id
-    :return: If success, sum of upvote and devote. if not, error message
-    """
-    try:
-        error_message = "Not a valid request"
-        is_up = int(request.GET["is_up"].strip())
-        if is_up == 1 or is_up == 0:
-            if not request.user.is_authenticated():
-                error_message = "please login"
-            else:
-                post = get_object_or_404(Post, slug=slug)
-                try:
-                    vote = post.vote_set.get(user=request.user)
-                except Vote.DoesNotExist:
-                    post.vote_set.create(user=request.user, is_up=is_up)
-                else:
-                    if vote.is_up == is_up:
-                        vote.delete()
-                    else:
-                        vote.is_up = is_up
-                        vote.save()
+		"""This view is intended to use ajax and handle vote.
+		Checking GET parameter 'is_up' decide upvote or devote.
+		:param request: Django request object
+		:param thread_id: Voted thread id
+		:return: If success, sum of upvote and devote. if not, error message
+		"""
+		try:
+				error_message = "Not a valid request"
+				is_up = int(request.GET["is_up"].strip())
+				if is_up == 1 or is_up == 0:
+						if not request.user.is_authenticated():
+								error_message = "please login"
+						else:
+								post = get_object_or_404(Post, slug=slug)
+								try:
+										vote = post.vote_set.get(user=request.user)
+								except Vote.DoesNotExist:
+										post.vote_set.create(user=request.user, is_up=is_up)
+								else:
+										if vote.is_up == is_up:
+												vote.delete()
+										else:
+												vote.is_up = is_up
+												vote.save()
 
-                json_data = '{"count":"%s"}' % post.get_vote_count()
-                return HttpResponse(json_data, content_type="application/json; charset=utf-8")
-    except KeyError:
-        json_data = '{"error_message":"%s"}' % "Not a valid request"
-        return HttpResponseBadRequest(json_data, content_type="application/json; charset=utf-8")
-    else:
-        json_data = '{"error_message":"%s"}' % error_message
-        return HttpResponseBadRequest(json_data, content_type="application/json; charset=utf-8")
+								json_data = '{"count":"%s"}' % post.get_vote_count()
+								return HttpResponse(json_data, content_type="application/json; charset=utf-8")
+		except KeyError:
+				json_data = '{"error_message":"%s"}' % "Not a valid request"
+				return HttpResponseBadRequest(json_data, content_type="application/json; charset=utf-8")
+		else:
+				json_data = '{"error_message":"%s"}' % error_message
+				return HttpResponseBadRequest(json_data, content_type="application/json; charset=utf-8")

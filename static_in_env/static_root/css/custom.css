@@ -1,0 +1,20 @@
+.text-align-center {
+	text-align: center;
+}
+
+div[class^="depth-"], div[class*="depth-"] {
+    padding-left: 10px;
+}
+
+table.thread td {
+    padding-left: 10px;
+    padding-right: 10px ;
+}
+
+.table tbody>tr>td.vert-align{
+    vertical-align: middle;
+}
+
+body {
+  font-family: 'Noto Sans Korean', sans-serif;
+}

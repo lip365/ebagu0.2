@@ -29,11 +29,15 @@ class CategoryForm(forms.ModelForm):
 
 class PostForm(forms.ModelForm):
 	title = forms.CharField(max_length=128, help_text="plz enter")
+
+	url = forms.URLField(max_length=200,
+						 help_text="Please enter the URL of the page.", required=False)
 	views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
 	content = forms.CharField(widget=FroalaEditor)
 	class Meta:
 		model = Post
-		fields = ['title', 'content', 'views', 'category']
+
+		exclude = ['pub_date', 'moderator', 'rank_score', 'image','slug']
 
 
 class ContactForm(forms.Form):

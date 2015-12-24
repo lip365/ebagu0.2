@@ -12,4 +12,3 @@ class CatAdmin(admin.ModelAdmin):
 
 admin.site.register(Post, PageAdmin)
 admin.site.register(Category, CatAdmin)
-admin.site.register(Vote)

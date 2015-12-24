@@ -1,0 +1,27 @@
+body {
+  min-height: 1000px;
+}
+
+
+.navbar-static-top {
+  margin-bottom: 19px;
+  background-color: #DAE3E6;
+}
+
+.navbar-default .navbar-brand {
+  color: #0D5870;
+}
+
+
+
+.navbar-default .navbar-toggle {
+ border-color: transparent !important;
+}
+
+.navbar-toggle:hover {
+	background-color: #1A5F23 !important;
+}
+
+.navbar-toggle {
+	background-color: #0E3D14 !important;
+}

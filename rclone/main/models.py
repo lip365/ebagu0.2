@@ -5,6 +5,7 @@ from django.template.defaultfilters import slugify
 from uuslug import uuslug
 from froala_editor.fields import FroalaField
 from main.util.ranking import hot
+from urlparse import urlparse
 
 # Create your models here.
 class Category(models.Model): 
@@ -19,6 +20,10 @@ class Category(models.Model):
 	def __unicode__(self): 
 		return self.name
 
+	def get_absolute_url(self):
+		return 'category/%s' % (self.slug)
+
+
 
 class PostVoteCountManager(models.Manager):
 	def get_query_set(self):
@@ -31,8 +36,8 @@ class Post(models.Model):
 	pub_date = models.DateTimeField(auto_now_add = True)
 	title = models.CharField(max_length = 100)
 	content = FroalaField()
-	url = models.URLField(max_length=250, blank=True)
-	moderator = models.ForeignKey(User, default="", null=True)
+	url = models.URLField(max_length=250, blank=True, null=True)
+	moderator = models.ForeignKey(User)
 	rank_score = models.FloatField(default= 1)
 
 	views = models.IntegerField(default=0)
@@ -41,7 +46,10 @@ class Post(models.Model):
 	
 	objects = models.Manager()            # default manager
 
-
+	@property
+	def domain(self):
+		long_url = urlparse(self.url).netloc if self.url else "be kind to one another"
+		return long_url.split('.', 1)[1] if long_url.split('.', 1)[0] == 'www' else long_url
 	def save(self, *args, **kwargs):
 		self.slug = uuslug(self.title, instance=self, max_length=100)
 		super(Post, self).save(*args, **kwargs)
