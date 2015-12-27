@@ -67,8 +67,11 @@
 	<div>
 	<div class="row placeholders">
 		<div class="col-sm-8">
-			
-<table class="table">
+    <table class="table">
+     <!-- <ul class="nav navbar-nav nav-tabs">
+   <li role="presentation" class="sort"><a href="/?sort=score&page=1">Score</a></li>
+  <li role="presentation" class="date"><a href="/?sort=date&page=1">Date</a></li>
+  </ul>-->
     {% if posts %}
         {% for post in posts %}
         <tr>
@@ -93,6 +96,8 @@
               <span class="btn btn-default">{{ post.moderator.username }}님이</span>
             <span class="btn btn-default">{{ post.pub_date | date }}</span>
             <span class="btn btn-default">{{post.views}}</span>
+             <a href="{% url 'post' post.slug %}" class="btn btn-default">discuss</a>
+
              <a href="{{ c.get_absolute_url }}" class="btn btn-default">{{post.category}}</a>
                   </div>
                 </ol>

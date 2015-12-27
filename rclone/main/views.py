@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 import json
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest 
@@ -15,19 +16,13 @@ from django.shortcuts import render
 from django.core.urlresolvers import reverse 
 from django.core.paginator import Paginator
 from main.util.common import SortMethods
+from main.util.media import extract
 
 #for front page
 
 def index(request):
-		"""This view return index page. In index page, there is thread list.
-		And thread list can be sorted by score, number of comment, date, title using paging.
-		GET parameters are 'sort' and 'page'. 'sort' is sorting methods. 'page' is number of page.
-		:param request: Django request object
-		:return: Thread list page
-		"""
-
 		categories = Category.objects.all()
-
+		
 		try:
 				sort = request.GET["sort"].strip()
 				sort_method = SortMethods[sort]
@@ -37,12 +32,12 @@ def index(request):
 				page = 1
 
 		if sort_method == SortMethods.date:
-				thread_list = Post.objects.order_by("-pub_date")
+				post_list = Post.objects.order_by("-pub_date")
 		else:
-				thread_list = Post.objects.all()
-				thread_list = sorted(thread_list, key=lambda x: x.get_score(), reverse=True)
+				post_list = Post.objects.all()
+				post_list = sorted(post_list, key=lambda x: x.get_score(), reverse=True)
 
-		paginator = Paginator(thread_list, 30)
+		paginator = Paginator(post_list, 30)
 
 		try:
 				posts = paginator.page(page)
@@ -55,17 +50,18 @@ def index(request):
 				"posts": posts,
 				"pages": paginator.page_range,
 				"sort": sort_method.name,
-				"categories":categories
+				"categories":categories,
+
 		}
 		return render(request, "main/index.html", context)
 
 #for single-post page
 def post(request, slug):
-		single_post = get_object_or_404(Post, slug=slug)
-		single_post.views += 1  # increment the number of views
-		single_post.save()      # and save it
+		post = get_object_or_404(Post, slug=slug)
+		post.views += 1  # increment the number of views
+		post.save()      # and save it
 		context_dict = {
-			'single_post' :single_post,
+			'post' :post,
 		}
 	
 		return render(request, 'main/post.html', context_dict)
@@ -127,17 +123,20 @@ class PostCreateView(CreateView):
 	 model = Post
 	 form_class = PostForm
 	 template_name = 'main/add_post.html'
-
+	
 	 def form_valid(self, form):
 			self.object = form.save(commit=False)
 			# any manual settings go here
 			self.object.moderator = self.request.user
-		
+			self.object.url = self.request.GET.get('url', False)
+			if self.object.url:
+				self.image = extract(url)
 			self.object.save()
 			return HttpResponseRedirect(reverse('post', args=[self.object.slug]))
 
 	 @method_decorator(login_required)
 	 def dispatch(self, request, *args, **kwargs):
+		
 			return super(PostCreateView, self).dispatch(request, *args, **kwargs)
 	
 

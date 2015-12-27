@@ -51,6 +51,7 @@ INSTALLED_APPS = (
 	'honeypot',
 	'froala_editor',
 	
+	
 
 )
 

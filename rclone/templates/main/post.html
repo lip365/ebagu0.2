@@ -1,20 +1,47 @@
 {% extends 'base.html'%}
-{% load static %}
 
 
 {% block content %}
 
-	<h2>{{single_post.title}}</h2>
-	<p>{{single_post.content}}</p>
-	<p> Views: {{single_post.views}}
-	<br>
-	<p>
-		{% if single_post.image %}
-		<img src="/media/{{single_post.image}}">
-		{% endif %}
-	</p>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+    <table class="post">
+        <tr>
+        	<td class="vert-align"><div>
+                            <a href="/post/{{ post.slug }}/vote?is_up=1" class="vote">
+ <span style="font-size:1.5em;" class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span></a>
+                <br>
+                <a href="/post/{{ post.slug }}/vote?is_up=0"  class="vote">
+            <span style="font-size:1.5em;" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></a>
+            </div></td>
+
+        <td>
+            <h4 id="vote_count_{{ post.id }}">{{ post.get_vote_count }}</h4>
+        </td>
+
+        <td>
+            <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+            <ol class="breadcrumb">
+                <li><span>{{ post.moderator.username }}</span></li>
+                <li><span class="time_presentation">{{ post.pub_date | date }}</span></li>
+                <li><span>조회수 {{ post.views }}</span></li>
+            </ol>
+        </td></tr>
+    </table>
+    </div>
+    <div class="panel-body">
+        {{ post.content }}
+        {{ post.image }}
+
+    </div>
+    
+
+</div>
 
 	<div id="disqus_thread"></div>
+
 <script>
 /**
 * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
@@ -33,5 +60,13 @@ s.setAttribute('data-timestamp', +new Date());
 (d.head || d.body).appendChild(s);
 })();
 </script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+    {% include 'main/paginator.html' %}
+    {% include 'footer.html' %}
+
+
+
 {% endblock %}
+

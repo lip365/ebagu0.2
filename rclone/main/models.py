@@ -1,3 +1,5 @@
+#-*- coding: utf-8 -*-
+
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -6,6 +8,7 @@ from uuslug import uuslug
 from froala_editor.fields import FroalaField
 from main.util.ranking import hot
 from urlparse import urlparse
+
 
 # Create your models here.
 class Category(models.Model): 
@@ -39,9 +42,8 @@ class Post(models.Model):
 	url = models.URLField(max_length=250, blank=True, null=True)
 	moderator = models.ForeignKey(User)
 	rank_score = models.FloatField(default= 1)
-
 	views = models.IntegerField(default=0)
-	image = models.ImageField(upload_to="images",blank=True, null=True)
+	image = models.FileField(upload_to="images",blank=True, null=True)
 	slug = models.CharField(max_length=100, unique=True)
 	
 	objects = models.Manager()            # default manager
@@ -55,7 +57,7 @@ class Post(models.Model):
 		super(Post, self).save(*args, **kwargs)
 	def __unicode__(self):
 		return self.title 
-
+ 
 
 	# for redirecting URL so slug is always shown
 	def get_absolute_url(self):
@@ -80,6 +82,8 @@ class Post(models.Model):
 		upvote_count = self.vote_set.filter(is_up=True).count()
 		devote_count = self.vote_set.filter(is_up=False).count()
 		return hot(upvote_count, devote_count, self.pub_date.replace(tzinfo=None))
+
+
 
 
 class Vote(models.Model):
