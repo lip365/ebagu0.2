@@ -1,23 +1,23 @@
-#-*- coding: utf-8 -*-
-
+# -*- coding: utf-8 -*-
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
-from django.template.defaultfilters import slugify
 from uuslug import uuslug
 from froala_editor.fields import FroalaField
 from main.util.ranking import hot
 from urlparse import urlparse
+from django.conf import settings
+from imagekit.models import ImageSpecField
+from imagekit.processors import ResizeToFill
 
 
 # Create your models here.
 class Category(models.Model): 
 	name = models.CharField(max_length=128, unique=True)
-	likes = models.IntegerField(default=0)
-	slug = models.SlugField(unique=True)
-	
+	slug = models.CharField(max_length=100, unique=True)
+	author = models.OneToOneField(settings.AUTH_USER_MODEL, unique=True)
 	def save(self, *args, **kwargs):
-		self.slug = slugify(self.name)
+		self.slug = uuslug(self.name,instance=self, max_length=100)
 		super(Category, self).save(*args, **kwargs)
 		
 	def __unicode__(self): 
@@ -43,10 +43,15 @@ class Post(models.Model):
 	moderator = models.ForeignKey(User)
 	rank_score = models.FloatField(default= 1)
 	views = models.IntegerField(default=0)
-	image = models.FileField(upload_to="images",blank=True, null=True)
+	image = models.ImageField(upload_to="images",blank=True, null=True)
+	image_thumbnail = ImageSpecField(source='image',
+		processors=[ResizeToFill(70,70)],
+		format= 'JPEG',
+		options= {'quality':60})
 	slug = models.CharField(max_length=100, unique=True)
-	
 	objects = models.Manager()            # default manager
+	
+
 
 	@property
 	def domain(self):

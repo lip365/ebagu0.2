@@ -1,6 +1,5 @@
 {% extends 'base.html'%}
 {% load staticfiles %}
-{% load extras %}
 
 
 <style>
@@ -73,6 +72,7 @@
   <li role="presentation" class="date"><a href="/?sort=date&page=1">Date</a></li>
   </ul>-->
     {% if posts %}
+
         {% for post in posts %}
         <tr>
             <td class="vert-align"><div>
@@ -87,7 +87,12 @@
             </td>
             <td>
                 {% if post.url %}
-                <h4><a href="{{ post.url }}" style="margin-left: 15px;">{{ post.title }}</a><span style="margin-left: 15px;" class="domain">({{ post.domain }})</span></h4>
+
+                <h4><a href="{{ post.url }}" style="margin-left: 15px;"> 
+
+        
+{{ post.title }}</a><span style="margin-left: 15px;" class="domain">
+({{ post.domain }})</span></h4>
                 {% else %}
                 <h4><a href="{% url 'post' post.slug %}" style="margin-left: 15px;">{{ post.title }}</a><span style="margin-left: 15px; "class="domain">({{ post.domain }})</span></h4>
                 {% endif %}
@@ -120,19 +125,21 @@
 					<a href="/add_post/">나도 한번 올려봐</a>
 				
                 <hr>
-               <ul class="list-group">
-         
-        </ul>
+      
 
+
+      <li class="nav-header">커뮤니티 찾기</li>
+      {% csrf_token %}
+      <input type="text" id="search" name="search" />
+
+      <ul id="search-results">
+
+      </ul>
+
+      {% include 'main/category_list.html'%}
      
 			</div>
-            <div class="col-sm-3 col-md-2 sidebar">
-
-    {% block side_block %}
-    {% get_category_list%}
-    {% endblock %}
-
-</div>
+            
 		</div>
 	</div>
 		</div>

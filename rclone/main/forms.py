@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 from django import forms
 from django.contrib.auth.models import User
 from main.models import Category, Post, UserProfile, Vote
@@ -29,7 +29,6 @@ class CategoryForm(forms.ModelForm):
 
 class PostForm(forms.ModelForm):
 	title = forms.CharField(max_length=128, help_text="plz enter")
-	image = forms.FileField(label='picture')
 
 	url = forms.URLField(max_length=200,
 						 help_text="Please enter the URL of the page.", required=False)

@@ -41,6 +41,8 @@ INSTALLED_APPS = (
 	
 
 	#3rd party apps
+	'whoosh',
+	'haystack',
 	'django_forms_bootstrap',
 	'guardian',
 	'easy_thumbnails',
@@ -50,7 +52,9 @@ INSTALLED_APPS = (
 	'envelope',
 	'honeypot',
 	'froala_editor',
-	
+	'imagekit'
+
+
 	
 
 )
@@ -123,7 +127,7 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_in_env", "static_root")
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static_in_pro", "our_static"),
+	os.path.join(BASE_DIR, "static_in_pro", "our_static"),
   
 )
 
@@ -171,3 +175,20 @@ FROALA_EDITOR_OPTIONS = {
 FROALA_EDITOR_PLUGINS = ('align', 'char_counter', 'code_view', 'colors', 'file',
 		'font_size','image', 'link', 'lists', 'paragraph_format', 'quote', 'table', 'url', 'fullscreen')
 FROALA_EDITOR_THEME = 'gray'
+
+
+WHOOSH_INDEX = os.path.join(BASE_DIR,'whoosh/')
+
+HAYSTACK_CONNECTIONS = {
+	'default': {
+		'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+		'PATH': WHOOSH_INDEX,
+	},
+}
+THUMBNAIL_DEBUG = True
+
+THUMBNAIL_ALIASES = {
+    '': {
+        'avatar': {'size': (50, 50), 'crop': True},
+    },
+}

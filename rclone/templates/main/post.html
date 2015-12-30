@@ -1,5 +1,5 @@
 {% extends 'base.html'%}
-
+{% load imagekit %}
 
 {% block content %}
 
@@ -33,7 +33,9 @@
     </div>
     <div class="panel-body">
         {{ post.content }}
-        {{ post.image }}
+ <img src = "{{post.image}}" />  
+<img src="{{ post.image_thumbnail.url}}" alt="" />
+
 
     </div>
     

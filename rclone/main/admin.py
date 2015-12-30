@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.contrib import admin
 from main.models import Post, Category, Vote
 # Register your models here.

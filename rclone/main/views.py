@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import json
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest 
@@ -17,7 +17,7 @@ from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator
 from main.util.common import SortMethods
 from main.util.media import extract
-
+from haystack.query import SearchQuerySet
 #for front page
 
 def index(request):
@@ -91,6 +91,12 @@ def category(request, category_name_slug):
 				posts = paginator.page(1)
 	except EmptyPage:
 				posts = paginator.page(paginator.num_pages)
+	
+	if request.method == 'POST':
+		query = request.POST.get('query')
+		if query:
+			query = query.strip()
+			result_list = run_query(query)
 
 	context = {
 				"posts": posts,
@@ -98,21 +104,23 @@ def category(request, category_name_slug):
 				"sort": sort_method.name,
 				"categories":category,
 			  "cat_name_slug":category_name_slug,
+			  "result_list":result_list,
 		}
 	return render(request, "main/index.html", context)
 
 
 @login_required
 def add_category(request):
-	if request.method == 'POST':
-		form = CategoryForm(request.POST)
-		if form.is_valid():
-			form.save(commit=True)
-			return index(request)
+	if Category.objects.filter(author=request.user).exists():
+		if request.method == 'POST':
+			category = Category(author=request.user)
+			form = CategoryForm(request.POST, instance=category)
+			if form.is_valid():
+				form.save(commit=True)
+				return index(request)
+			
 		else:
-			print form.errors
-	else:
-		form = CategoryForm()
+			form = CategoryForm()
 
 	return render(request, 'main/add_category.html', {'form':form})
 
@@ -128,9 +136,8 @@ class PostCreateView(CreateView):
 			self.object = form.save(commit=False)
 			# any manual settings go here
 			self.object.moderator = self.request.user
-			self.object.url = self.request.GET.get('url', False)
-			if self.object.url:
-				self.image = extract(url)
+			self.object.image = extract(self.object.url) 
+
 			self.object.save()
 			return HttpResponseRedirect(reverse('post', args=[self.object.slug]))
 
@@ -204,3 +211,10 @@ def vote(request, slug):
 		else:
 				json_data = '{"error_message":"%s"}' % error_message
 				return HttpResponseBadRequest(json_data, content_type="application/json; charset=utf-8")
+
+
+
+def search_titles(request):
+	articles = SearchQuerySet().autocomplete(content_auto=request.POST.get('search_text', ''))            
+	
+	return render_to_response('ajax_search.html', {'articles' : articles})
