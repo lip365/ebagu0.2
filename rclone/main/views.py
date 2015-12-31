@@ -104,7 +104,7 @@ def category(request, category_name_slug):
 				"sort": sort_method.name,
 				"categories":category,
 			  "cat_name_slug":category_name_slug,
-			  "result_list":result_list,
+			 
 		}
 	return render(request, "main/index.html", context)
 
@@ -112,15 +112,16 @@ def category(request, category_name_slug):
 @login_required
 def add_category(request):
 	if Category.objects.filter(author=request.user).exists():
-		if request.method == 'POST':
-			category = Category(author=request.user)
-			form = CategoryForm(request.POST, instance=category)
-			if form.is_valid():
-				form.save(commit=True)
-				return index(request)
+		return render(request,'main/category_already_exists.html')
+	if request.method == 'POST':
+		category = Category(author=request.user)
+		form = CategoryForm(request.POST, instance=category)
+		if form.is_valid():
+			form.save(commit=True)
+			return redirect('index')
 			
-		else:
-			form = CategoryForm()
+	else:
+		form = CategoryForm()
 
 	return render(request, 'main/add_category.html', {'form':form})
 
@@ -218,3 +219,5 @@ def search_titles(request):
 	articles = SearchQuerySet().autocomplete(content_auto=request.POST.get('search_text', ''))            
 	
 	return render_to_response('ajax_search.html', {'articles' : articles})
+
+

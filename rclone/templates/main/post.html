@@ -33,8 +33,10 @@
     </div>
     <div class="panel-body">
         {{ post.content }}
- <img src = "{{post.image}}" />  
-<img src="{{ post.image_thumbnail.url}}" alt="" />
+
+<img src="{{ post.image_thumbnail }}" alt="" />
+        
+<img src="{{ post.image}}" alt="" />
 
 
     </div>

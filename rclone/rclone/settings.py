@@ -52,7 +52,7 @@ INSTALLED_APPS = (
 	'envelope',
 	'honeypot',
 	'froala_editor',
-	'imagekit'
+	'imagekit',
 
 
 	

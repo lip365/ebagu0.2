@@ -10,7 +10,6 @@ from django.conf import settings
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 
-
 # Create your models here.
 class Category(models.Model): 
 	name = models.CharField(max_length=128, unique=True)
@@ -46,8 +45,8 @@ class Post(models.Model):
 	image = models.ImageField(upload_to="images",blank=True, null=True)
 	image_thumbnail = ImageSpecField(source='image',
 		processors=[ResizeToFill(70,70)],
-		format= 'JPEG',
-		options= {'quality':60})
+		format='PNG',
+		options={'quality':60})
 	slug = models.CharField(max_length=100, unique=True)
 	objects = models.Manager()            # default manager
 	
