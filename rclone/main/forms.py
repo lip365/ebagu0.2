@@ -34,10 +34,11 @@ class PostForm(forms.ModelForm):
 						 help_text="Please enter the URL of the page.", required=False)
 	views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
 	content = forms.CharField(widget=FroalaEditor)
+
+
 	class Meta:
 		model = Post
-
-		exclude = ['pub_date', 'moderator', 'rank_score', 'image','slug']
+		exclude = ['pub_date', 'moderator', 'rank_score','slug','image']
 
 
 

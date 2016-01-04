@@ -7,8 +7,8 @@ from froala_editor.fields import FroalaField
 from main.util.ranking import hot
 from urlparse import urlparse
 from django.conf import settings
-from imagekit.models import ImageSpecField
-from imagekit.processors import ResizeToFill
+from easy_thumbnails.fields import ThumbnailerImageField
+
 
 # Create your models here.
 class Category(models.Model): 
@@ -42,15 +42,10 @@ class Post(models.Model):
 	moderator = models.ForeignKey(User)
 	rank_score = models.FloatField(default= 1)
 	views = models.IntegerField(default=0)
-	image = models.ImageField(upload_to="images",blank=True, null=True)
-	image_thumbnail = ImageSpecField(source='image',
-		processors=[ResizeToFill(70,70)],
-		format='PNG',
-		options={'quality':60})
+	image = ThumbnailerImageField(upload_to='images',blank=True, null=True)
 	slug = models.CharField(max_length=100, unique=True)
 	objects = models.Manager()            # default manager
 	
-
 
 	@property
 	def domain(self):

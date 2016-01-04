@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import easy_thumbnails.fields
 from django.conf import settings
 import froala_editor.fields
 
@@ -32,7 +33,7 @@ class Migration(migrations.Migration):
                 ('url', models.URLField(max_length=250, null=True, blank=True)),
                 ('rank_score', models.FloatField(default=1)),
                 ('views', models.IntegerField(default=0)),
-                ('image', models.ImageField(null=True, upload_to=b'images', blank=True)),
+                ('image', easy_thumbnails.fields.ThumbnailerImageField(null=True, upload_to=b'images', blank=True)),
                 ('slug', models.CharField(unique=True, max_length=100)),
                 ('category', models.ForeignKey(to='main.Category')),
                 ('moderator', models.ForeignKey(to=settings.AUTH_USER_MODEL)),

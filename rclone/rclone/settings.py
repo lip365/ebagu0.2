@@ -48,11 +48,9 @@ INSTALLED_APPS = (
 	'easy_thumbnails',
 	'userena',
 	'disqus',
-	'django_comments',
 	'envelope',
 	'honeypot',
 	'froala_editor',
-	'imagekit',
 
 
 	
@@ -186,9 +184,3 @@ HAYSTACK_CONNECTIONS = {
 	},
 }
 THUMBNAIL_DEBUG = True
-
-THUMBNAIL_ALIASES = {
-    '': {
-        'avatar': {'size': (50, 50), 'crop': True},
-    },
-}

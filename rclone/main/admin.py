@@ -10,7 +10,7 @@ class PageAdmin(admin.ModelAdmin):
 class CatAdmin(admin.ModelAdmin): 
 	
 	prepopulated_fields = {'slug':('name',)}
-	fields = ['name', 'slug']
+	fields = ['name', 'slug','author']
 
 admin.site.register(Post, PageAdmin)
 admin.site.register(Category, CatAdmin)

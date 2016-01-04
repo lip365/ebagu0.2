@@ -18,6 +18,7 @@ from django.core.paginator import Paginator
 from main.util.common import SortMethods
 from main.util.media import extract
 from haystack.query import SearchQuerySet
+from easy_thumbnails.files import get_thumbnailer
 #for front page
 
 def index(request):
@@ -133,6 +134,7 @@ class PostCreateView(CreateView):
 	 form_class = PostForm
 	 template_name = 'main/add_post.html'
 	
+	
 	 def form_valid(self, form):
 			self.object = form.save(commit=False)
 			# any manual settings go here
@@ -140,7 +142,16 @@ class PostCreateView(CreateView):
 			self.object.image = extract(self.object.url) 
 
 			self.object.save()
+
 			return HttpResponseRedirect(reverse('post', args=[self.object.slug]))
+
+	 def get_context_data(self, **kwargs):
+			context = super(PostCreateView, self).get_context_data(**kwargs)
+			post = self.model.objects.get(pk=kwargs.get('pk')) 	
+			options = {'size': (64, 64), 'crop': True} 
+			context['post_thumbnail'] = get_thumbnailer(post.image).get_thumbnail(options).url
+			return context
+	
 
 	 @method_decorator(login_required)
 	 def dispatch(self, request, *args, **kwargs):
