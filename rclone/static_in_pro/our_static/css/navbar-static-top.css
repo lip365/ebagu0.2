@@ -1,27 +1,23 @@
-body {
-  min-height: 1000px;
+
+.navbar-primary .navbar { background:#ffffff; 
+	border-bottom:1px solid 001f3f;
+	}
+.navbar-primary .navbar .navbar-brand {color:#001f3f;}
+
+.btn-md {
+		padding-left: 2px;
+        padding-right: 2px;
+        padding-top:2px;
+        padding-bottom: 2px;
+        margin-left: -24px;
+
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active{
+    background: #33a6cc;
 }
 
+.btn-success:hover, .btn-success:focus, .btn-success:active, .btn-suc.active{
+    background: #7FFFD4;
 
-.navbar-static-top {
-  margin-bottom: 19px;
-  background-color: #DAE3E6;
 }
 
-.navbar-default .navbar-brand {
-  color: #0D5870;
-}
-
-
-
-.navbar-default .navbar-toggle {
- border-color: transparent !important;
-}
-
-.navbar-toggle:hover {
-	background-color: #1A5F23 !important;
-}
-
-.navbar-toggle {
-	background-color: #0E3D14 !important;
-}

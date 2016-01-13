@@ -5,108 +5,68 @@
 <style>
 {% block style %}
 
-.jumbotron {
-    padding: 0.5em 0.6em;
-    h1 {
-        font-size: 2em;
-    }
-    p {
-        font-size: 1.2em;
-        .btn {
-            padding: 0.5em;
-        }
-    }
-}
-/*change breadcrumb background color*/
 
-.btn-breadcrumb .btn:not(:last-child):after {
-  content: " ";
-  display: block;
-  width: 0;
-  height: 0;
-  border-top: 17px solid transparent;
-  border-bottom: 17px solid transparent;
-  border-left: 10px solid white;
-  position: absolute;
-  top: 50%;
-  margin-top: -17px;
-  left: 100%;
-  z-index: 3;
-}
-
-.btn-breadcrumb .btn.btn-default:not(:last-child):after {
-  border-left: 10px solid #fff;
-}
-.btn-breadcrumb .btn.btn-default:not(:last-child):before {
-  border-left: 10px solid #ccc;
-}
-.btn-breadcrumb .btn.btn-default:hover:not(:last-child):after {
-  border-left: 10px solid #ebebeb;
-}
-.btn-breadcrumb .btn.btn-default:hover:not(:last-child):before {
-  border-left: 10px solid #adadad;
-}
 
 {% endblock %}
 </style>
 
-{% block jumbotron %}
-<div class="container">
-<div class="jumbotron">
-      <div class="container">
-        <p> <li><a href="/contact/">광고문의</a></li> </p>
 
-      </div>
-    </div>
-</div>
-{% endblock %}
 
 {% block content %}
 
 	<div>
+
+  <div id="Space" >
+  <ul>
+  <li>인기순</li>
+  <li>최신순</li>
+  </ul>
+</div>
+
 	<div class="row placeholders">
-		<div class="col-sm-8">
-    <table class="table">
-     <!-- <ul class="nav navbar-nav nav-tabs">
-   <li role="presentation" class="sort"><a href="/?sort=score&page=1">Score</a></li>
-  <li role="presentation" class="date"><a href="/?sort=date&page=1">Date</a></li>
-  </ul>-->
+
+<div class="col-sm-2">
+  <div id="guide-container">
+  <p id="bar"><i class="fa fa-star"></i> best of Ebagu</p>
+  <ul>
+    <li><span></span></li>
+  </ul>
+</div>
+</div>
+
+<div class="col-sm-7">
+
+<table class="table">
     {% if posts %}
+      {% for post in posts %}
+      <tr class="cell">
 
-        {% for post in posts %}
-        <tr>
-            <td class="vert-align"><div>
-                            <a href="/post/{{ post.slug }}/vote?is_up=1" class="vote">
- <span style="font-size:1.5em;" class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span></a>
-                <br>
-                <a href="/post/{{ post.slug }}/vote?is_up=0"  class="vote">
-            <span style="font-size:1.5em;" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></a>
-            </div></td>
-            <td class="vert-align">
-                <h4 id="vote_count_{{ post.slug }}">{{ post.get_vote_count }}</h4>
-            </td>
-            <td>
-                {% if post.url %}
+<td class="vert-align">
+        <div>
+<a href="/post/{{ post.slug }}/vote?is_up=1" class="vote">
+ <span style="font-size:1.5em;"><i class="fa fa-arrow-up"></i></span></a><br>
 
-                <h4><a href="{{ post.url }}" style="margin-left: 15px;"> 
+<h4 id="vote_count_{{ post.slug }}">{{ post.get_vote_count }}</h4>     <br>
 
-        
-{{ post.title }}</a><span style="margin-left: 15px;" class="domain">
-({{ post.domain }})</span></h4>
-                {% else %}
-                <h4><a href="{% url 'post' post.slug %}" style="margin-left: 15px;">{{ post.title }}</a><span style="margin-left: 15px; "class="domain">({{ post.domain }})</span></h4>
-                {% endif %}
-                <ol class="post-info">
-                 <div class="btn-group btn-breadcrumb">
-              <span class="btn btn-default">{{ post.moderator.username }}님이</span>
-            <span class="btn btn-default">{{ post.pub_date | date }}</span>
-            <span class="btn btn-default">{{post.views}}</span>
-             <a href="{% url 'post' post.slug %}" class="btn btn-default">discuss</a>
+<a href="/post/{{ post.slug }}/vote?is_up=0"  class="vote">
+<span style="font-size:1.5em;"><i class="fa fa-arrow-down"></i></span></a>
+        </div>
+</td>
 
-             <a href="{{ c.get_absolute_url }}" class="btn btn-default">{{post.category}}</a>
-                  </div>
-                </ol>
-            </td>
+
+<td class="vert-align">
+  {% if post.url %}
+<h4 id="line"><a href="{{ post.url }}" style="margin-left: 15px;"> <img src="{{post.image}}" height="85" width="85"/> <span id="title-font">{{ post.title }}</span>
+</a><span style="margin-left: 15px;" class="domain">
+({{ post.domain }})</span><span class="discuss"><a href="{% url 'post' post.slug %}" class="btn btn-default">토론장 입장
+</a></span><br><span class="post-info">{{ post.pub_date | timesince }}전/{{ post.moderator.username }}작성/<i class="fa fa-eye"></i>{{post.views}}/<a href="/category/{{post.category}}">{{post.category}}</a></span>
+{% else %}
+<h4><a href="{% url 'post' post.slug %}" style="margin-left: 15px;">{{ post.title }}</a><span style="margin-left: 15px; "class="domain">({{ post.domain }})</span></h4>
+{% endif %}
+
+
+
+</td>
         </tr>
         {% endfor %}
     {% else %}
@@ -117,12 +77,11 @@
 </table>
 
 </div>
-		<div class="col-sm-4">
+		<div class="col-sm-3">
 			<div class="row">
-				<a href="/add_category/">커뮤니티 만들기</a><br />
-				
-				<br>
-					<a href="/add_post/">나도 한번 올려봐</a>
+				<a href="/add_category/"><button type="button" class="btn btn-block btn-customm">커뮤니티 만들기</button>
+</a><br />
+			<a href="/add_post/"><button type="button" class="btn btn-block btn-custom">나도 한번 올려봐</button></a>
 				
                 <hr>
       
@@ -135,8 +94,7 @@
       <ul id="search-results">
 
       </ul>
-
-      {% include 'main/category_list.html'%}
+      
      
 			</div>
             

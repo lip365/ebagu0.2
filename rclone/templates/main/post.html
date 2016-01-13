@@ -1,8 +1,6 @@
 {% extends 'base.html'%}
-{% load thumbnail %}
 
 {% block content %}
-
 
 
 <div class="panel panel-default">
@@ -33,7 +31,11 @@
     </div>
     <div class="panel-body">
         {{ post.content }}
-<img src='{{post_thumbnail}}'></img>
+
+
+<div id = "a">
+<img src="{{post.image}}" />
+</div>
 
 
 

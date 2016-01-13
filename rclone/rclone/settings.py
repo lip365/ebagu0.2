@@ -41,8 +41,7 @@ INSTALLED_APPS = (
 	
 
 	#3rd party apps
-	'whoosh',
-	'haystack',
+	
 	'django_forms_bootstrap',
 	'guardian',
 	'easy_thumbnails',
@@ -51,7 +50,9 @@ INSTALLED_APPS = (
 	'envelope',
 	'honeypot',
 	'froala_editor',
-
+	'follow',
+	'whoosh',
+	'haystack',
 
 	
 
@@ -175,12 +176,13 @@ FROALA_EDITOR_PLUGINS = ('align', 'char_counter', 'code_view', 'colors', 'file',
 FROALA_EDITOR_THEME = 'gray'
 
 
+
 WHOOSH_INDEX = os.path.join(BASE_DIR,'whoosh/')
 
+
 HAYSTACK_CONNECTIONS = {
-	'default': {
-		'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-		'PATH': WHOOSH_INDEX,
-	},
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': WHOOSH_INDEX,
+    },
 }
-THUMBNAIL_DEBUG = True

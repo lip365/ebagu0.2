@@ -17,5 +17,5 @@ urlpatterns = [
 	url(r'^(?P<slug>[\w|\-]+)/delete/$', PostDeleteView.as_view(), name='post-delete'),
 	url(r'^add_category/', views.add_category, name='add_category'),
 	url(r'^(?P<slug>[\w|\-]+)/$', views.post, name='post'),
-	
-]
+	url(r'^search/$', 'main.views.search_titles'),
+	]

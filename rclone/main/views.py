@@ -18,7 +18,9 @@ from django.core.paginator import Paginator
 from main.util.common import SortMethods
 from main.util.media import extract
 from haystack.query import SearchQuerySet
-from easy_thumbnails.files import get_thumbnailer
+
+
+
 #for front page
 
 def index(request):
@@ -96,8 +98,7 @@ def category(request, category_name_slug):
 	if request.method == 'POST':
 		query = request.POST.get('query')
 		if query:
-			query = query.strip()
-			result_list = run_query(query)
+			result_list = run_query(query, API_KEY)
 
 	context = {
 				"posts": posts,
@@ -134,7 +135,6 @@ class PostCreateView(CreateView):
 	 form_class = PostForm
 	 template_name = 'main/add_post.html'
 	
-	
 	 def form_valid(self, form):
 			self.object = form.save(commit=False)
 			# any manual settings go here
@@ -142,16 +142,8 @@ class PostCreateView(CreateView):
 			self.object.image = extract(self.object.url) 
 
 			self.object.save()
-
 			return HttpResponseRedirect(reverse('post', args=[self.object.slug]))
 
-	 def get_context_data(self, **kwargs):
-			context = super(PostCreateView, self).get_context_data(**kwargs)
-			post = self.model.objects.get(pk=kwargs.get('pk')) 	
-			options = {'size': (64, 64), 'crop': True} 
-			context['post_thumbnail'] = get_thumbnailer(post.image).get_thumbnail(options).url
-			return context
-	
 
 	 @method_decorator(login_required)
 	 def dispatch(self, request, *args, **kwargs):
@@ -225,10 +217,8 @@ def vote(request, slug):
 				return HttpResponseBadRequest(json_data, content_type="application/json; charset=utf-8")
 
 
-
 def search_titles(request):
-	articles = SearchQuerySet().autocomplete(content_auto=request.POST.get('search_text', ''))            
-	
-	return render_to_response('ajax_search.html', {'articles' : articles})
-
-
+    categories = SearchQuerySet().autocomplete(content_auto=request.POST.get('search_text', ''))            
+    
+    return render_to_response('ajax_search.html', {'categories' : categories
+    	})

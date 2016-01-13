@@ -7,7 +7,8 @@ from froala_editor.fields import FroalaField
 from main.util.ranking import hot
 from urlparse import urlparse
 from django.conf import settings
-from easy_thumbnails.fields import ThumbnailerImageField
+from follow import utils
+
 
 
 # Create your models here.
@@ -21,11 +22,6 @@ class Category(models.Model):
 		
 	def __unicode__(self): 
 		return self.name
-
-	def get_absolute_url(self):
-		return 'category/%s' % (self.slug)
-
-
 
 class PostVoteCountManager(models.Manager):
 	def get_query_set(self):
@@ -42,7 +38,7 @@ class Post(models.Model):
 	moderator = models.ForeignKey(User)
 	rank_score = models.FloatField(default= 1)
 	views = models.IntegerField(default=0)
-	image = ThumbnailerImageField(upload_to='images',blank=True, null=True)
+	image = models.ImageField(upload_to='images',blank=True, null=True)
 	slug = models.CharField(max_length=100, unique=True)
 	objects = models.Manager()            # default manager
 	
