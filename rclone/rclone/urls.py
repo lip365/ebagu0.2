@@ -13,7 +13,9 @@ urlpatterns = [
 	url(r'^froala_editor/', include('froala_editor.urls')),
    
 	#url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': MEDIA_ROOT}),
- 	url(r'^search/$',include('haystack.urls')),
+	url(r'^search/$',include('haystack.urls')),
+	url(r'^favorites/', include('favorites.urls')),
+
 
 	url(r'^accounts/', include('userena.urls')),
 	url(r'^', include('main.urls')),

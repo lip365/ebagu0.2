@@ -33,7 +33,7 @@
       <ul class="nav navbar-nav navbar-right">
        {% if user.is_authenticated %}
          <li><a href="/accounts/signout">로그아웃</a></li>
-         <li><a href="/accounts">프로필 편집</a></li>
+         <li><a href="{% url 'userena_profile_detail' user.username %}">프로필 편집</a></li>
         {% else %}
         <li><a href="/accounts/signup/"><button class="btn btn-success btn-md"  type="submit">회원가입</button></a></li></a></li>
         <li><a href="/accounts/signin/"><button class="btn btn-primary btn-md"  type="submit">로그인</button></a></li> 

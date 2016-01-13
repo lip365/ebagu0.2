@@ -222,3 +222,5 @@ def search_titles(request):
     
     return render_to_response('ajax_search.html', {'categories' : categories
     	})
+
+

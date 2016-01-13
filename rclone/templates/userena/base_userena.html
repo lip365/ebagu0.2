@@ -1,1 +1,73 @@
-{% extends "base.html" %}
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang = "ko">
+	<head>
+		<meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <meta name="description" content="Ebagu.net">
+	    <meta name="author" content="YG">
+
+	    <title>Ebagu- {% block title %}인터넷의 시작과 끝{%endblock%} </title>
+	  {% include 'head_css.html' %}
+
+    
+      <style>
+      #a{
+	font-family: Roboto;
+  	background: -webkit-linear-gradient(90deg, #2BC0E4 10%, #EAECC6 90%); /* Chrome 10+, Saf5.1+ */
+  	background:    -moz-linear-gradient(90deg, #2BC0E4 10%, #EAECC6 90%); /* FF3.6+ */
+  	background:     -ms-linear-gradient(90deg, #2BC0E4 10%, #EAECC6 90%); /* IE10 */
+  	background:      -o-linear-gradient(90deg, #2BC0E4 10%, #EAECC6 90%); /* Opera 11.10+ */
+  	background:         linear-gradient(90deg, #2BC0E4 10%, #EAECC6 90%); /* W3C */
+	}
+
+	#container{
+
+	width: 360px;
+	margin: 100px auto;
+	background: #f7f7f7;
+	box-shadow: 29px 10px 5px 0px rgba(0,0,0,0.75);
+	font-size: 18px;
+font-family: 'Nanum Gothic', sans-serif;
+	padding: 13px 13px 13px 20px;
+    text-align: center;
+	border: 3px solid rgba(0,0,0,0);
+}
+
+li{
+	text-align: left;
+}
+
+      </style>
+
+
+	</head>
+
+	<body id="a">
+    
+  {% include 'navbar.html' %}
+
+
+     
+  <div id="container">
+            
+
+          
+            {% block content %}
+
+            {% endblock %}
+              
+
+    </div> <!-- /container -->
+
+
+
+    {% include "javascript.html" %}
+
+
+  </body>
+	
+	
+</html>

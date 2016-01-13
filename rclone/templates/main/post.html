@@ -1,4 +1,6 @@
 {% extends 'base.html'%}
+{% load favorite_tags %}
+{% csrf_token %}
 
 {% block content %}
 
@@ -27,6 +29,8 @@
                 <li><span>조회수 {{ post.views }}</span></li>
             </ol>
         </td></tr>
+<div class="actions">{% if user.is_authenticated %}{% fav_item post user %}{% endif %}</div>
+
     </table>
     </div>
     <div class="panel-body">

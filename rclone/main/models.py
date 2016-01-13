@@ -7,7 +7,6 @@ from froala_editor.fields import FroalaField
 from main.util.ranking import hot
 from urlparse import urlparse
 from django.conf import settings
-from follow import utils
 
 
 

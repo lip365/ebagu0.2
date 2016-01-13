@@ -41,7 +41,8 @@ INSTALLED_APPS = (
 	
 
 	#3rd party apps
-	
+	'favorites',
+
 	'django_forms_bootstrap',
 	'guardian',
 	'easy_thumbnails',
@@ -50,9 +51,9 @@ INSTALLED_APPS = (
 	'envelope',
 	'honeypot',
 	'froala_editor',
-	'follow',
 	'whoosh',
 	'haystack',
+	
 
 	
 
@@ -146,6 +147,7 @@ AUTH_PROFILE_MODULE = 'accounts.MyProfile'
 USERENA_SIGNIN_REDIRECT_URL = '/accounts/%(username)s/'
 LOGIN_URL = '/accounts/signin/'
 LOGOUT_URL = '/accounts/signout/'
+USERENA_ACTIVATION_REQUIRED = False
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True

@@ -4,7 +4,22 @@
 
 <style>
 {% block style %}
-
+hr.style-eight {
+    padding: 0;
+    border: none;
+    border-top: medium double black;
+    color: black;
+    text-align: center;
+}
+hr.style-eight:after {
+    content: "§";
+    display: inline-block;
+    position: relative;
+    top: -0.7em;
+    font-size: 1.5em;
+    padding: 0 0.25em;
+    background: white;
+}
 
 
 {% endblock %}
@@ -28,9 +43,11 @@
 <div class="col-sm-2">
   <div id="guide-container">
   <p id="bar"><i class="fa fa-star"></i> best of Ebagu</p>
+
   <ul>
     <li><span></span></li>
   </ul>
+
 </div>
 </div>
 
@@ -59,7 +76,7 @@
 <h4 id="line"><a href="{{ post.url }}" style="margin-left: 15px;"> <img src="{{post.image}}" height="85" width="85"/> <span id="title-font">{{ post.title }}</span>
 </a><span style="margin-left: 15px;" class="domain">
 ({{ post.domain }})</span><span class="discuss"><a href="{% url 'post' post.slug %}" class="btn btn-default">토론장 입장
-</a></span><br><span class="post-info">{{ post.pub_date | timesince }}전/{{ post.moderator.username }}작성/<i class="fa fa-eye"></i>{{post.views}}/<a href="/category/{{post.category}}">{{post.category}}</a></span>
+</a></span><br><span class="post-info">{{ post.pub_date | timesince }}전/<a href="{% url 'userena_profile_detail' post.moderator.username %}">{{ post.moderator.username }}</a>작성/<i class="fa fa-eye"></i>{{post.views}}/<a href="/category/{{post.category}}">{{post.category}}</a></span>
 {% else %}
 <h4><a href="{% url 'post' post.slug %}" style="margin-left: 15px;">{{ post.title }}</a><span style="margin-left: 15px; "class="domain">({{ post.domain }})</span></h4>
 {% endif %}
