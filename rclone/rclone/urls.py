@@ -5,6 +5,8 @@ from django.contrib import admin
 from django.conf.urls import patterns, url
 from envelope.views import ContactView
 from django.contrib.auth.decorators import login_required as auth
+from accounts.forms import SignupFormExtra
+
 
 urlpatterns = [
 	url(r'^admin/', include(admin.site.urls)),
@@ -19,6 +21,8 @@ urlpatterns = [
 
 	url(r'^accounts/', include('userena.urls')),
 	url(r'^', include('main.urls')),
+	url(r'^accounts/signup/$','userena.views.signup',{'signup_form': SignupFormExtra}),
+
 
 
 ]

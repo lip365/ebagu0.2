@@ -92,12 +92,3 @@ class Vote(models.Model):
 		else:
 			return result + " with -1"
 
-
-
-class UserProfile(models.Model):
-	picture = models.ImageField(upload_to='profile_images', blank=True)
-	website = models.URLField(blank=True)
-	user = models.OneToOneField(User)
-
-	def __unicode__(self):
-		return self.user.username

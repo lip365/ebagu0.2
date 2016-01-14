@@ -1,0 +1,33 @@
+<div id="add-remove-favorite" class="{% if favorite %}has-favorite{% endif %}"></div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $("#add-remove-favorite").click(function(){
+        if($("#add-remove-favorite").hasClass("has-favorite")){
+            $.ajax({
+                url: "{% url 'favorite_ajax_remove' %}",
+                type: "POST",
+                data: {
+                    content_type_id: {{content_type.pk}},
+                    object_id: {{object.pk}},
+                },
+                success: function(){
+                    $("#add-remove-favorite").removeClass("has-favorite")
+                }
+            });
+        }else{
+            $.ajax({
+                url: "{% url 'favorite_ajax_add' %}",
+                type: "POST",
+                data: {
+                    content_type_id: {{content_type.pk}},
+                    object_id: {{object.pk}},
+                },
+                success: function(){
+                    $("#add-remove-favorite").addClass("has-favorite")
+                }
+            });
+        }
+    })
+});
+</script>

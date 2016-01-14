@@ -6,7 +6,7 @@ from django.template import Context, loader,RequestContext
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 # Create your views here.
 from main.models import Post, Category, Vote
-from main.forms import UserForm, UserProfileForm, CategoryForm, PostForm
+from main.forms import CategoryForm, PostForm
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
@@ -18,14 +18,18 @@ from django.core.paginator import Paginator
 from main.util.common import SortMethods
 from main.util.media import extract
 from haystack.query import SearchQuerySet
+from django.contrib.contenttypes.models import ContentType
+from favorites.models import Favorite
+from django.contrib.auth.models import User
 
-
+from accounts.models import MyProfile
 
 #for front page
 
 def index(request):
+		user = User.objects.get(username=request.user)
+
 		categories = Category.objects.all()
-		
 		try:
 				sort = request.GET["sort"].strip()
 				sort_method = SortMethods[sort]
@@ -49,11 +53,14 @@ def index(request):
 		except EmptyPage:
 				posts = paginator.page(paginator.num_pages)
 
+		content_type = get_object_or_404(ContentType, app_label='main', model='post')
+		favs = Favorite.objects.favorites_for_user(user).filter(content_type=content_type)
 		context = {
 				"posts": posts,
 				"pages": paginator.page_range,
 				"sort": sort_method.name,
 				"categories":categories,
+				"favs":favs,
 
 		}
 		return render(request, "main/index.html", context)

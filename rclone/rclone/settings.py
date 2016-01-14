@@ -38,10 +38,11 @@ INSTALLED_APPS = (
 	'django.contrib.sites',
 	'main',
 	'accounts',
+	'favorites',
 	
 
 	#3rd party apps
-	'favorites',
+	
 
 	'django_forms_bootstrap',
 	'guardian',

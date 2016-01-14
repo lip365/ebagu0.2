@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import url
 from main.views import *
-from accounts.forms import SignupFormExtra
 
 from main import views
 
@@ -19,5 +18,4 @@ urlpatterns = [
 	url(r'^add_category/', views.add_category, name='add_category'),
 	url(r'^(?P<slug>[\w|\-]+)/$', views.post, name='post'),
 	url(r'^search/$', 'main.views.search_titles'),
-	url(r'^accounts/signup/$','userena.views.signup',{'signup_form': SignupFormExtra}),
 	]

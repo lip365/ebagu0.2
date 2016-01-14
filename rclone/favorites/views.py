@@ -13,7 +13,7 @@ def ajax_login_required(view_func):
         if request.user.is_authenticated():
             return view_func(request, *args, **kwargs)
         json = simplejson.dumps({'not_authenticated': True})
-        return HttpResponse(json, mimetype='application/json', status=401)
+        return HttpResponse(json, content_type='application/json', status=401)
     wrap.__doc__ = view_func.__doc__
     wrap.__dict__ = view_func.__dict__
     return wrap
@@ -34,5 +34,5 @@ def ajax_fav(request, ctype_id, obj_id):
         fav = Favorite.objects.create_favorite(item, request.user)
         count = Favorite.objects.favorites_for_object(item).count()
         data_dict = {'id': fav.id, 'message': fav_settings.FAV_REMOVE, 'counter': build_message(count), }
-    return HttpResponse(simplejson.dumps(data_dict), mimetype='application/javascript')
+    return HttpResponse(simplejson.dumps(data_dict), content_type='application/javascript')
 
