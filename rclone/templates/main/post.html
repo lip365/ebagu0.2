@@ -3,9 +3,6 @@
 
 {% block content %}
 
-{% csrf_token %}
-
-<div class="actions">{% if user.is_authenticated %}{% fav_item post user %}{% endif %}</div>
 
 
 
@@ -40,9 +37,6 @@
         {{ post.content }}
 
 
-<div id = "a">
-<img src="{{post.image}}" />
-</div>
 
 
 

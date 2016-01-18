@@ -6,13 +6,12 @@ from froala_editor.widgets import FroalaEditor
 
 
 class CategoryForm(forms.ModelForm):
-	name = forms.CharField(max_length=128, help_text="plz enter")
-	likes = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
-	slug = forms.CharField(widget=forms.HiddenInput, required=False)
-
+	name = forms.CharField(max_length=128)
+	description = forms.CharField(max_length=300)
+	image = forms.ImageField()
 	class Meta:
 		model = Category
-		fields =('name',)
+		fields =('name','description','image')
 
 class PostForm(forms.ModelForm):
 	title = forms.CharField(max_length=128, help_text="plz enter")

@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import stdimage.models
 
 
 class Migration(migrations.Migration):
@@ -12,9 +11,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='post',
+        migrations.AddField(
+            model_name='category',
             name='image',
-            field=stdimage.models.StdImageField(null=True, upload_to=b'images', blank=True),
+            field=models.ImageField(null=True, upload_to=b'images', blank=True),
         ),
     ]

@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from django.db import models, connection
 
 from django.contrib.auth.models import User
@@ -70,4 +73,4 @@ class Favorite(models.Model):
         unique_together = (('user', 'content_type', 'object_id'),)
     
     def __unicode__(self):
-        return "%s likes %s" % (self.user, self.content_object)
+        return "%s 구독중: %s" % (self.user, self.content_object)

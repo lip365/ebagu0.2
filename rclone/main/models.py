@@ -9,15 +9,13 @@ from urlparse import urlparse
 from django.conf import settings
 
 
-
 # Create your models here.
 class Category(models.Model): 
 	name = models.CharField(max_length=128, unique=True)
-	slug = models.CharField(max_length=100, unique=True)
+	description = models.CharField(max_length=200, unique=True)
+	image = models.FileField(upload_to='images',blank=True, null=True)
 	author = models.OneToOneField(settings.AUTH_USER_MODEL, unique=True)
-	def save(self, *args, **kwargs):
-		self.slug = uuslug(self.name,instance=self, max_length=100)
-		super(Category, self).save(*args, **kwargs)
+	
 		
 	def __unicode__(self): 
 		return self.name

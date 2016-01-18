@@ -7,10 +7,5 @@ from main.models import Post, Category, Vote
 class PageAdmin(admin.ModelAdmin):
 	list_display = ('title', 'category')
 
-class CatAdmin(admin.ModelAdmin): 
-	
-	prepopulated_fields = {'slug':('name',)}
-	fields = ['name', 'slug','author']
-
 admin.site.register(Post, PageAdmin)
-admin.site.register(Category, CatAdmin)
+admin.site.register(Category)

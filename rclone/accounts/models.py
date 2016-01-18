@@ -11,5 +11,4 @@ class MyProfile(UserenaBaseProfile):
                                 unique=True,
                                 verbose_name=_('user'),
                                 related_name='my_profile')
-    intro = models.CharField(_('intro'),
-                                       max_length=5, default="Hello")
+    

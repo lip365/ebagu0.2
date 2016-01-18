@@ -62,6 +62,7 @@ INSTALLED_APPS = (
 
 MIDDLEWARE_CLASSES = (
 	'django.contrib.sessions.middleware.SessionMiddleware',
+
 	'django.middleware.common.CommonMiddleware',
 	'django.middleware.csrf.CsrfViewMiddleware',
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -145,7 +146,9 @@ ANONYMOUS_USER_ID = -1
 AUTH_PROFILE_MODULE = 'accounts.MyProfile'  
 
 
-USERENA_SIGNIN_REDIRECT_URL = '/accounts/%(username)s/'
+USERENA_SIGNIN_REDIRECT_URL = '/'
+USERENA_REDIRECT_ON_SIGNOUT  = '/'
+
 LOGIN_URL = '/accounts/signin/'
 LOGOUT_URL = '/accounts/signout/'
 USERENA_ACTIVATION_REQUIRED = False
@@ -184,8 +187,18 @@ WHOOSH_INDEX = os.path.join(BASE_DIR,'whoosh/')
 
 
 HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-        'PATH': WHOOSH_INDEX,
-    },
+	'default': {
+		'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+		'PATH': WHOOSH_INDEX,
+	},
 }
+
+from django.utils.translation import ugettext_lazy as _
+LANGUAGES = (
+	('en', _('English')),
+	('ko', _('Korean')),
+)
+
+LOCALE_PATHS = (
+	os.path.join(BASE_DIR, 'locale'),
+)

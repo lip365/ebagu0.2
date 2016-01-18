@@ -16,3 +16,4 @@ $("a.vote").on("click", function() {
     vote($(this));
     return false;
 });
+

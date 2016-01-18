@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.conf.urls import patterns, url
 from envelope.views import ContactView
 from django.contrib.auth.decorators import login_required as auth
-from accounts.forms import SignupFormExtra
+from accounts.forms import EditProfileFormExtra
 
 
 urlpatterns = [
@@ -15,18 +15,16 @@ urlpatterns = [
 	url(r'^froala_editor/', include('froala_editor.urls')),
    
 	#url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': MEDIA_ROOT}),
-	url(r'^search/$',include('haystack.urls')),
-	url(r'^favorites/', include('favorites.urls')),
+	url(r'^main/search/$',include('haystack.urls')),
+	url(r'^follow/', include('favorites.urls')),
 
 
 	url(r'^accounts/', include('userena.urls')),
 	url(r'^', include('main.urls')),
-	url(r'^accounts/signup/$','userena.views.signup',{'signup_form': SignupFormExtra}),
 
 
 
 ]
-
 if settings.DEBUG:
 	urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 	urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

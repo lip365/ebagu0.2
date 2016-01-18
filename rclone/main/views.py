@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import json
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest 
@@ -25,9 +26,10 @@ from django.contrib.auth.models import User
 from accounts.models import MyProfile
 
 #for front page
-
+def decode_url(str):
+	return str.replace('_', ' ')
+	
 def index(request):
-		user = User.objects.get(username=request.user)
 
 		categories = Category.objects.all()
 		try:
@@ -52,15 +54,12 @@ def index(request):
 				posts = paginator.page(1)
 		except EmptyPage:
 				posts = paginator.page(paginator.num_pages)
-
-		content_type = get_object_or_404(ContentType, app_label='main', model='post')
-		favs = Favorite.objects.favorites_for_user(user).filter(content_type=content_type)
+		
 		context = {
 				"posts": posts,
 				"pages": paginator.page_range,
 				"sort": sort_method.name,
 				"categories":categories,
-				"favs":favs,
 
 		}
 		return render(request, "main/index.html", context)
@@ -76,10 +75,12 @@ def post(request, slug):
 	
 		return render(request, 'main/post.html', context_dict)
 #for category page
-def category(request, category_name_slug):
+def category(request, category_name_url):
+	user = User.objects.get(username=request.user)
+	category_name = decode_url(category_name_url)
 	try:
 		
-				category = Category.objects.get(slug=category_name_slug)
+				category = Category.objects.get(name=category_name)
 				sort = request.GET["sort"].strip()
 				sort_method = SortMethods[sort]
 				page = request.GET["page"].strip()
@@ -106,25 +107,27 @@ def category(request, category_name_slug):
 		query = request.POST.get('query')
 		if query:
 			result_list = run_query(query, API_KEY)
+	content_type = get_object_or_404(ContentType, app_label='main', model='category')
+	favs = Favorite.objects.favorites_for_user(user).filter(content_type=content_type)
 
 	context = {
 				"posts": posts,
 				"pages": paginator.page_range,
 				"sort": sort_method.name,
-				"categories":category,
-			  "cat_name_slug":category_name_slug,
-			 
+				"category":category,
+			 	"favs":favs,
+
 		}
-	return render(request, "main/index.html", context)
+	return render(request, "main/category.html", context)
 
 
 @login_required
 def add_category(request):
-	if Category.objects.filter(author=request.user).exists():
+	if not request.user.is_superuser and Category.objects.filter(author=request.user).exists():
 		return render(request,'main/category_already_exists.html')
 	if request.method == 'POST':
 		category = Category(author=request.user)
-		form = CategoryForm(request.POST, instance=category)
+		form = CategoryForm(request.POST, request.FILES, instance=category)
 		if form.is_valid():
 			form.save(commit=True)
 			return redirect('index')
@@ -225,9 +228,7 @@ def vote(request, slug):
 
 
 def search_titles(request):
-    categories = SearchQuerySet().autocomplete(content_auto=request.POST.get('search_text', ''))            
-    
-    return render_to_response('ajax_search.html', {'categories' : categories
-    	})
-
-
+	categories = SearchQuerySet().autocomplete(content_auto=request.POST.get('search_text', ''))            
+	
+	return render_to_response('ajax_search.html', {'categories' : categories
+		})
