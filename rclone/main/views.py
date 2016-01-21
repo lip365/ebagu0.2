@@ -179,7 +179,7 @@ class PostUpdateView(UpdateView):
 	 @method_decorator(login_required)
 	 def dispatch(self, request, *args, **kwargs):
 		post = Post.objects.get(slug=kwargs['slug'])
-		if request.user.has_perm('main.change_post') and post.moderator == request.user:
+		if post.moderator == request.user:
 			return super(PostUpdateView, self).dispatch(request, *args, **kwargs)
 		else:
 			return http.HttpForbidden()
@@ -197,7 +197,7 @@ class PostDeleteView(DeleteView):
 	 @method_decorator(login_required)
 	 def dispatch(self, request, *args, **kwargs):
 		post = Post.objects.get(slug=kwargs['slug'])
-		if request.user.has_perm('main.delete_post') and post.moderator == request.user:
+		if post.moderator == request.user:
 			return super(PostDeleteView, self).dispatch(request, *args, **kwargs)
 		else:
 			return http.HttpForbidden()
@@ -238,11 +238,13 @@ def vote(request, slug):
 				return HttpResponseBadRequest(json_data, content_type="application/json; charset=utf-8")
 
 
+
 def search_titles(request):
-	categories = SearchQuerySet().autocomplete(content_auto=request.POST.get('search_text', ''))            
-	
-	return render_to_response('ajax_search.html', {'categories' : categories
-		})
+# categories = SearchQuerySet().autocomplete(content_auto=request.POST.get('search_text', ''))
+
+	categories = Category.objects.filter(name__icontains=request.POST.get('search_text', ''))
+
+	return render_to_response('main/ajax_search.html', {'categories' : categories})
 
 
 def timeline(request):

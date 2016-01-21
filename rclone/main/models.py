@@ -25,11 +25,6 @@ class Category(models.Model):
 	def get_absolute_url(self):
 		return "/category/%s/" %self.name
 
-def new_category(sender, instance, created, **kwargs):
-    action.send(instance.user, verb='posted', target=instance, mood='sleepy')
-		
-post_save.connect(new_category, sender=Category)
-
 
 class Post(models.Model):
 	category = models.ForeignKey(Category)
@@ -94,4 +89,4 @@ class Vote(models.Model):
 			return result + " with +1"
 		else:
 			return result + " with -1"
-			
+
