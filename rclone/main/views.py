@@ -178,11 +178,11 @@ class PostUpdateView(UpdateView):
 
 	 @method_decorator(login_required)
 	 def dispatch(self, request, *args, **kwargs):
-	 	post = Post.objects.get(slug=kwargs['slug'])
-	 	if request.user.has_perm('main.change_post') and post.moderator == request.user:
-	 		return super(PostUpdateView, self).dispatch(request, *args, **kwargs)
-	 	else:
-	 		return http.HttpForbidden()
+		post = Post.objects.get(slug=kwargs['slug'])
+		if request.user.has_perm('main.change_post') and post.moderator == request.user:
+			return super(PostUpdateView, self).dispatch(request, *args, **kwargs)
+		else:
+			return http.HttpForbidden()
 
 
 
@@ -196,11 +196,11 @@ class PostDeleteView(DeleteView):
 
 	 @method_decorator(login_required)
 	 def dispatch(self, request, *args, **kwargs):
-	 	post = Post.objects.get(slug=kwargs['slug'])
-	 	if request.user.has_perm('main.delete_post') and post.moderator == request.user:
-	 		return super(PostDeleteView, self).dispatch(request, *args, **kwargs)
-	 	else:
-	 		return http.HttpForbidden()
+		post = Post.objects.get(slug=kwargs['slug'])
+		if request.user.has_perm('main.delete_post') and post.moderator == request.user:
+			return super(PostDeleteView, self).dispatch(request, *args, **kwargs)
+		else:
+			return http.HttpForbidden()
 
 def vote(request, slug):
 		"""This view is intended to use ajax and handle vote.
@@ -246,31 +246,31 @@ def search_titles(request):
 
 
 def timeline(request):
-    activities = user_stream(request.user)
-    context = {
-        'activities': activities,
-    }
-    return render(request, 'all_timeline.html', context)
+	activities = user_stream(request.user)
+	context = {
+		'activities': activities,
+	}
+	return render(request, 'all_timeline.html', context)
 
 
 def category_timeline(request, category):
-    user = User.objects.select_related('Category').get(category=category)
-    user_actions = []
+	user = User.objects.select_related('my_profile').get(username=username)
+	user_actions = []
 
-    if is_following(request.user, user) or not user.category.private:
-        user_actions = actor_stream(user)
+	if is_following(request.user, user) or not user.category.private:
+		user_actions = actor_stream(user)
 
-    context = {
-        'user': user,
-        'activities': user_actions,
-    }
-    return render(request, 'timeline.html', context)
+	context = {
+		'user': user,
+		'activities': user_actions,
+	}
+	return render(request, 'timeline.html', context)
 
 
 def follow_user(request, category):
-    follow(request.user, User.objects.get(category=category))
-    return redirect('category_timeline', category)
+	follow(request.user, User.objects.get(category=category))
+	return redirect('category_timeline', category)
 
 def unfollow_user(request, category):
-    unfollow(request.user, User.objects.get(category=category))
-    return redirect('category_timeline', category)
+	unfollow(request.user, User.objects.get(category=category))
+	return redirect('category_timeline', category)

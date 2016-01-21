@@ -94,4 +94,4 @@ class Vote(models.Model):
 			return result + " with +1"
 		else:
 			return result + " with -1"
-
+			
