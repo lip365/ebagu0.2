@@ -39,6 +39,7 @@ INSTALLED_APPS = (
 	'main',
 	'accounts',
 	'favorites',
+	'actstream',
 	
 
 	#3rd party apps
@@ -54,7 +55,8 @@ INSTALLED_APPS = (
 	'froala_editor',
 	'whoosh',
 	'haystack',
-	
+	'tastypie',
+	'django_select2'
 
 	
 

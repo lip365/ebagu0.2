@@ -1,29 +1,27 @@
 $(function(){
-    $(document).on('click', 'a.favIt', function(e){
-        e.preventDefault();
-        var itemId = $(this).attr('id').split("_")[1],
-            csrf = $('[name=csrfmiddlewaretoken]').val();
-        if (!csrf) console.log("You must add {% csrftoken %} somewhere in the template.");
+    $('a.favIt').live('click', function(){      
+        var itemId = $(this).attr('id').split("_")[1];
         $.ajax({
             type: "POST",
-            url: $(this).attr("data-action-url"),
-            data: {'csrfmiddlewaretoken': csrf},
+            url: $(this).attr("href"),
+            data: {},
             dataType: "json",
             timeout: 2000,
-            cache: false,
+            cache: false,           
             beforeSend: function(XMLHttpRequest) {
                 //$("#loader").fadeIn();
             },
             error: function(data, XMLHttpRequest, textStatus, errorThrown){
                 $(this).html("Error connecting to the server.");
-            },
+            },              
             complete: function(XMLHttpRequest, textStatus) {
                 //$("#loader").fadeOut();
-            },
+            },                        
             success: function(data, textStatus, XMLHttpRequest){
                 $('#FavIt_'+itemId).html(data.message);
                 $('#FavCounter_'+itemId).html(data.counter);
             }
-        });
+            });             
+        return false;
     });
 });

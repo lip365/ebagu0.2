@@ -101,8 +101,17 @@
 				
                 <hr>
         <p id="ad">사이트 소개 </p>
-      <a href="/main/search"><button type="button" class="btn btn-block btn-custommm">커뮤니티 찾기</button>
+      <a href="/search"><button type="button" class="btn btn-block btn-custommm">커뮤니티 찾기</button>
+
 </a>
+
+<h3>Search</h3>
+{% csrf_token %}
+<input type="text" id="search" name="search" />
+
+<ul id="search-results">
+
+</ul>
 <hr>
 <div id="ad1">
 </div>

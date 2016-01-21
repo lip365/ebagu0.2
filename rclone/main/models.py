@@ -3,42 +3,47 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from uuslug import uuslug
-from froala_editor.fields import FroalaField
-from main.util.ranking import hot
 from urlparse import urlparse
 from django.conf import settings
 
+from froala_editor.fields import FroalaField
+from main.util.ranking import hot
+
+from django.db.models.signals import post_save
+from actstream import action
 
 # Create your models here.
 class Category(models.Model): 
 	name = models.CharField(max_length=128, unique=True)
 	description = models.CharField(max_length=200, unique=True)
 	image = models.FileField(upload_to='images',blank=True, null=True)
-	author = models.OneToOneField(settings.AUTH_USER_MODEL, unique=True)
+	author = models.ForeignKey(settings.AUTH_USER_MODEL)
 	
-		
 	def __unicode__(self): 
 		return self.name
 
-class PostVoteCountManager(models.Manager):
-	def get_query_set(self):
-		return super(PostVoteCountManager, self).get_query_set().annotate(
-			votes=Count('vote')).order_by('-rank_score', '-votes')
+	def get_absolute_url(self):
+		return "/category/%s/" %self.name
+
+def new_category(sender, instance, created, **kwargs):
+    action.send(instance.user, verb='posted', target=instance, mood='sleepy')
+		
+post_save.connect(new_category, sender=Category)
 
 
 class Post(models.Model):
 	category = models.ForeignKey(Category)
 	pub_date = models.DateTimeField(auto_now_add = True)
 	title = models.CharField(max_length = 100)
-	content = FroalaField()
 	url = models.URLField(max_length=250, blank=True, null=True)
 	moderator = models.ForeignKey(User)
-	rank_score = models.FloatField(default= 1)
 	views = models.IntegerField(default=0)
-	image = models.ImageField(upload_to='images',blank=True, null=True)
 	slug = models.CharField(max_length=100, unique=True)
 	objects = models.Manager()            # default manager
 	
+	content = FroalaField()
+	rank_score = models.FloatField(default= 1)
+	image = models.ImageField(upload_to='images',blank=True, null=True)
 
 	@property
 	def domain(self):

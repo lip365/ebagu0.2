@@ -4,7 +4,7 @@ $(function(){
     
         $.ajax({
             type: "POST",
-            url: "main/search/",
+            url: "/search/",
             data: { 
                 'search_text' : $('#search').val(),
                 'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val()

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load activity_tags %}
+
+{% block content %}
+    <div style="float:right">Signed in as {{ request.user }}</div>
+    <h1>{{ user.username }}</h1>
+    <h3> {% if user.profile.private %}Private{% else %}Public{% endif %} User</h3>
+    <h3>
+        {% if request.user|is_following:user %}
+            Following | <a href="{% url 'unfollow' user.username %}">Unfollow</a>
+        {% else %}
+            Not Following  | <a href="{% url 'follow' user.username %}">Follow</a>
+        {% endif %}
+    </h3>
+    {% for activity in activities %}
+        {{ activity }}
+        <hr>
+    {% endfor %}
+{% endblock %}

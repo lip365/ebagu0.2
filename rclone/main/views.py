@@ -2,6 +2,7 @@
 
 import json
 from django.shortcuts import render
+from tastypie import http
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest 
 from django.template import Context, loader,RequestContext
 from django.shortcuts import get_object_or_404, render_to_response, redirect
@@ -13,17 +14,24 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.shortcuts import render
 from django.core.urlresolvers import reverse 
 from django.core.paginator import Paginator
 from main.util.common import SortMethods
+
+
 from main.util.media import extract
+
+
 from haystack.query import SearchQuerySet
 from django.contrib.contenttypes.models import ContentType
 from favorites.models import Favorite
 from django.contrib.auth.models import User
 
 from accounts.models import MyProfile
+
+from actstream.actions import follow, unfollow, is_following
+from actstream.models import actor_stream, user_stream
+
 
 #for front page
 def decode_url(str):
@@ -115,7 +123,7 @@ def category(request, category_name_url):
 				"pages": paginator.page_range,
 				"sort": sort_method.name,
 				"category":category,
-			 	"favs":favs,
+				"favs":favs,
 
 		}
 	return render(request, "main/category.html", context)
@@ -137,8 +145,6 @@ def add_category(request):
 
 	return render(request, 'main/add_category.html', {'form':form})
 
-
-
 class PostCreateView(CreateView):
 
 	 model = Post
@@ -154,12 +160,9 @@ class PostCreateView(CreateView):
 			self.object.save()
 			return HttpResponseRedirect(reverse('post', args=[self.object.slug]))
 
-
 	 @method_decorator(login_required)
 	 def dispatch(self, request, *args, **kwargs):
-		
-			return super(PostCreateView, self).dispatch(request, *args, **kwargs)
-	
+		return super(PostCreateView, self).dispatch(request, *args, **kwargs)		
 
 
 class PostUpdateView(UpdateView):
@@ -175,7 +178,12 @@ class PostUpdateView(UpdateView):
 
 	 @method_decorator(login_required)
 	 def dispatch(self, request, *args, **kwargs):
-		 return super(PostUpdateView, self).dispatch(request, *args, **kwargs)
+	 	post = Post.objects.get(slug=kwargs['slug'])
+	 	if request.user.has_perm('main.change_post') and post.moderator == request.user:
+	 		return super(PostUpdateView, self).dispatch(request, *args, **kwargs)
+	 	else:
+	 		return http.HttpForbidden()
+
 
 
 
@@ -185,11 +193,14 @@ class PostDeleteView(DeleteView):
 	 def get_success_url(self):
 			return "/" 
 
+
 	 @method_decorator(login_required)
 	 def dispatch(self, request, *args, **kwargs):
-			return super(PostDeleteView, self).dispatch(request, *args, **kwargs)
-
-
+	 	post = Post.objects.get(slug=kwargs['slug'])
+	 	if request.user.has_perm('main.delete_post') and post.moderator == request.user:
+	 		return super(PostDeleteView, self).dispatch(request, *args, **kwargs)
+	 	else:
+	 		return http.HttpForbidden()
 
 def vote(request, slug):
 		"""This view is intended to use ajax and handle vote.
@@ -232,3 +243,34 @@ def search_titles(request):
 	
 	return render_to_response('ajax_search.html', {'categories' : categories
 		})
+
+
+def timeline(request):
+    activities = user_stream(request.user)
+    context = {
+        'activities': activities,
+    }
+    return render(request, 'all_timeline.html', context)
+
+
+def category_timeline(request, category):
+    user = User.objects.select_related('Category').get(category=category)
+    user_actions = []
+
+    if is_following(request.user, user) or not user.category.private:
+        user_actions = actor_stream(user)
+
+    context = {
+        'user': user,
+        'activities': user_actions,
+    }
+    return render(request, 'timeline.html', context)
+
+
+def follow_user(request, category):
+    follow(request.user, User.objects.get(category=category))
+    return redirect('category_timeline', category)
+
+def unfollow_user(request, category):
+    unfollow(request.user, User.objects.get(category=category))
+    return redirect('category_timeline', category)
