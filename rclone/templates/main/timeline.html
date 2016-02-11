@@ -1,0 +1,15 @@
+
+{% extends 'base.html' %}
+{% load activity_tags %}
+
+{% block content %}
+    <div style="float:right">Signed in as {{ request.user }}</div>
+   
+    
+
+
+    {% for activity in activities %}
+        {{ activity }}
+        <hr>
+    {% endfor %}
+{% endblock %}

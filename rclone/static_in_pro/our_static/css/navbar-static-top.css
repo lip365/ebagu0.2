@@ -1,8 +1,14 @@
 
-.navbar-primary .navbar { background:#ffffff; 
-	border-bottom:1px solid 001f3f;
-	}
-.navbar-primary .navbar .navbar-brand {color:#001f3f;}
+.navbar-primary .navbar { 
+	background:#000000; 
+	border-bottom:1px solid #ffff00;
+}
+
+.navbar-primary .navbar .navbar-brand{
+	color:#ffff00;
+	font-family: 'Montserrat', sans-serif;
+
+}
 
 .btn-md {
 		padding-left: 2px;
@@ -12,11 +18,20 @@
         margin-left: -24px;
 
 }
+
+.btn-default{
+	color:#000000;
+	background-color: #FFFF00;
+}
+.btn-primary{
+	color:#000000;
+	background-color: #FFFF00;
+}
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active{
-    background: #33a6cc;
+    background: #ffb3b3;
 }
 
-.btn-success:hover, .btn-success:focus, .btn-success:active, .btn-suc.active{
+.btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active{
     background: #7FFFD4;
 
 }

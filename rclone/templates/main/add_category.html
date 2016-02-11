@@ -1,11 +1,33 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
+
+
+{% load crispy_forms_tags %}
+
+{% block head %}
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" type="text/css" media="all" rel="stylesheet" />
+{% endblock %}}
 
 {% block content %}
+<div class="col-sm-5">
+
 <form id="post_form" method="post" action="/add_category/" enctype="multipart/form-data">
 	{% csrf_token %}
 	
-	{{form.as_p}}
+	{{form|crispy}}
 
 	 <input type="submit" name="submit" value="Create Post">
 	</form>
+
+</div>
+
+<div class="col-sm-4" style="width:400px; height:250px; border:1px solid black;">
+<h3>rule</h3>
+
+</div>
+
+<div class="col-sm-3" style="width:420px; height:750px; border:1px solid black;" >
+<h3>ad</h3>
+</div>
 {% endblock %}

@@ -1,6 +1,6 @@
 {% extends 'base.html'%}
 {% load staticfiles %}
-{% load favorite_tags %}
+{% load activity_tags %}
 
 
 <style>
@@ -29,11 +29,18 @@
 <div class="col-sm-2">
   <div id="guide-container">
   <p id="bar"><i class="fa fa-star"></i> best of Ebagu</p>
-           {{favs}}
-  <ul>
+ <ul>
     <li><span></span></li>
   </ul>
 
+</div>
+<div id="following-tag-box">
+  <div class="tab-pane{% if active_tab == 'connections' %} active{% endif %}" id="connections">
+        {% for a in following %}
+<a id="following-link" href="{{ a.get_absolute_url }}">{{ a }}</a> 
+<br />
+        {% endfor %}
+  </div>
 </div>
 </div>
 
@@ -94,13 +101,30 @@
         <p id="ad">사이트 소개 </p>
 
         <div style="border:1px solid black">
-{{category.name}}
-{{category.image}}   
-<div class="actions">{% if user.is_authenticated %}{% fav_item category user %}{% endif %}</div>
-</div>
+
+   
+    <form class="form-follow" method="POST" action="{% follow_url category %}">
+      <input type="hidden" name="next" value="{{ request.path }}">
+      {% if request.user|is_following:category %}
+      <button class="btn btn-warning btn-follow">Unfollow</button>
+      {% else %}
+      <button class="btn btn-success btn-follow">Follow</button>
+      {% endif %}
+    </form>
+      <div class="tab-pane{% if active_tab == 'connections' %} active{% endif %}" id="connections">
+        {% for a in following %}
+<a href="{{ a.get_absolute_url }}">{{ a }}</a> 
+<br />
+        {% endfor %}
+
+      </div>
       <a href="/main/search"><button type="button" class="btn btn-block btn-customm">커뮤니티 찾기</button>
 </a>
 <hr>
+
+<ul id="search-results">
+
+</ul>
 <div id="ad1">
 </div>
 

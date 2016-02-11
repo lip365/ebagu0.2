@@ -1,12 +1,9 @@
 from django.apps import AppConfig
 from actstream import registry
-
-from django.contrib.auth import get_user_model
-
-# User = get_user_model()
+from django.contrib.auth.models import User
 
 class MyAppConfig(AppConfig):
     name = 'main'
 
     def ready(self):
-        registry.register(self.get_model('Category'))
+        registry.register(User,self.get_model('Category'))

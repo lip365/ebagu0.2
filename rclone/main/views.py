@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 import json
 from django.shortcuts import render
 from tastypie import http
@@ -7,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadReque
 from django.template import Context, loader,RequestContext
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 # Create your views here.
-from main.models import Post, Category, Vote
+from main.models import Post, Category, Vote, Comment
 from main.forms import CategoryForm, PostForm
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views.generic import ListView
@@ -20,17 +21,23 @@ from main.util.common import SortMethods
 
 
 from main.util.media import extract
-
+from main.util.mediaa import extractt 
 
 from haystack.query import SearchQuerySet
 from django.contrib.contenttypes.models import ContentType
-from favorites.models import Favorite
 from django.contrib.auth.models import User
 
-from accounts.models import MyProfile
 
-from actstream.actions import follow, unfollow, is_following
+from actstream.actions import follow, unfollow
+from actstream.models import following, followers
+
 from actstream.models import actor_stream, user_stream
+from annoying.utils import HttpResponseReload
+
+
+from accounts import forms
+from userena import views as userena_views
+
 
 
 #for front page
@@ -68,24 +75,30 @@ def index(request):
 				"pages": paginator.page_range,
 				"sort": sort_method.name,
 				"categories":categories,
+				"following" :following(request.user.id),
 
 		}
 		return render(request, "main/index.html", context)
 
 #for single-post page
 def post(request, slug):
+
 		post = get_object_or_404(Post, slug=slug)
 		post.views += 1  # increment the number of views
 		post.save()      # and save it
+		comments = Comment.objects.filter(post=post)
+
 		context_dict = {
 			'post' :post,
+			'comments' : comments,
 		}
-	
+
 		return render(request, 'main/post.html', context_dict)
 #for category page
 def category(request, category_name_url):
 	user = User.objects.get(username=request.user)
 	category_name = decode_url(category_name_url)
+
 	try:
 		
 				category = Category.objects.get(name=category_name)
@@ -110,20 +123,14 @@ def category(request, category_name_url):
 				posts = paginator.page(1)
 	except EmptyPage:
 				posts = paginator.page(paginator.num_pages)
-	
-	if request.method == 'POST':
-		query = request.POST.get('query')
-		if query:
-			result_list = run_query(query, API_KEY)
-	content_type = get_object_or_404(ContentType, app_label='main', model='category')
-	favs = Favorite.objects.favorites_for_user(user).filter(content_type=content_type)
-
 	context = {
 				"posts": posts,
 				"pages": paginator.page_range,
 				"sort": sort_method.name,
 				"category":category,
-				"favs":favs,
+				'user':user,
+				"following" :following(request.user.id),
+
 
 		}
 	return render(request, "main/category.html", context)
@@ -152,8 +159,12 @@ class PostCreateView(CreateView):
 	 template_name = 'main/add_post.html'
 	
 	 def form_valid(self, form):
+
 			self.object = form.save(commit=False)
 			# any manual settings go here
+
+			#self.object.category = Category.objects.filter(category__in=categories).all()
+
 			self.object.moderator = self.request.user
 			self.object.image = extract(self.object.url) 
 
@@ -163,7 +174,6 @@ class PostCreateView(CreateView):
 	 @method_decorator(login_required)
 	 def dispatch(self, request, *args, **kwargs):
 		return super(PostCreateView, self).dispatch(request, *args, **kwargs)		
-
 
 class PostUpdateView(UpdateView):
 	 model = Post
@@ -241,38 +251,75 @@ def vote(request, slug):
 
 def search_titles(request):
 # categories = SearchQuerySet().autocomplete(content_auto=request.POST.get('search_text', ''))
-
-	categories = Category.objects.filter(name__icontains=request.POST.get('search_text', ''))
-
+	txt = request.POST.get('search_text', '') 
+	if txt != '':
+		categories = Category.objects.filter(name__icontains=txt)
+	else:
+		categories = []
 	return render_to_response('main/ajax_search.html', {'categories' : categories})
 
 
+	
 def timeline(request):
 	activities = user_stream(request.user)
 	context = {
-		'activities': activities,
+		'activities':activities
 	}
-	return render(request, 'all_timeline.html', context)
+	return render(request,'all_timeline.html', context)
+
+def follow(request, category_name_url):
+
+	follow(request.user, Category.objects.get(name=category_name_url))
+	return HttpResponseReload(request)
 
 
-def category_timeline(request, category):
-	user = User.objects.select_related('my_profile').get(username=username)
-	user_actions = []
+def unfollow(request, category_name_url):
 
-	if is_following(request.user, user) or not user.category.private:
-		user_actions = actor_stream(user)
-
-	context = {
-		'user': user,
-		'activities': user_actions,
-	}
-	return render(request, 'timeline.html', context)
+	unfollow(request.user,Category.objects.get(name=category_name_url))
+	return HttpResponseReload(request)
 
 
-def follow_user(request, category):
-	follow(request.user, User.objects.get(category=category))
-	return redirect('category_timeline', category)
 
-def unfollow_user(request, category):
-	unfollow(request.user, User.objects.get(category=category))
-	return redirect('category_timeline', category)
+def profile_edit(request, username, edit_profile_form=forms.CustomEditProfileForm,
+				 template_name='userena/profile_form.html', success_url=None,
+				 extra_context=None, **kwargs):
+	
+	return userena_views.profile_edit(request=request, username=username,
+			edit_profile_form=edit_profile_form, template_name=template_name,
+			success_url=success_url, extra_context=extra_context)
+
+
+
+@login_required
+def post_comment(request):
+	if not request.user.is_authenticated():
+		return JsonResponse({'msg': "You need to log in to post new comments."})
+
+	parent_type = request.POST.get('parentType', None)
+	parent_id = request.POST.get('parentId', None)
+	raw_comment = request.POST.get('commentContent', None)
+
+	if not all([parent_id, parent_type]) or \
+			parent_type not in ['comment', 'submission'] or \
+		not parent_id.isdigit():
+		return HttpResponseBadRequest()
+
+	if not raw_comment:
+		return JsonResponse({'msg': "You have to write something."})
+	author = User.objects.get(user=request.user)
+	parent_object = None
+	try:  # try and get comment or submission we're voting on
+		if parent_type == 'comment':
+			parent_object = Comment.objects.get(id=parent_id)
+		elif parent_type == 'submission':
+			parent_object = Submission.objects.get(id=parent_id)
+
+	except (Comment.DoesNotExist, Submission.DoesNotExist):
+		return HttpResponseBadRequest()
+
+	comment = Comment.create(author=author,
+							 raw_comment=raw_comment,
+							 parent=parent_object)
+
+	comment.save()
+	return JsonResponse({'msg': "Your comment has been posted."})

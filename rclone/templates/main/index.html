@@ -1,16 +1,12 @@
 {% extends 'base.html'%}
 {% load staticfiles %}
+{% load activity_tags %}
+{% load embed_video_tags %}
 
 
 <style>
 {% block style %}
-.btn-custom1{
-  float:left;
-  margin:5px;
-}
-.btn-custom1:hover {
-  background-color: #6caddf;
-}
+
 
 
 {% endblock %}
@@ -20,33 +16,42 @@
 
 {% block content %}
 
-	<div>
 
-  <div id="Space" >
+  <div>
+    <!--
+<div class="search-box">
+  <ul id="search-results">
+
+</ul>
+</div>-->
+
+<div id="Space">
   <ul>
-      <li role="presentation" class="sort"><a href="/?sort=score&page=1" style="text-decoration:none;">인기순</a></li>
-
-    <li role="presentation" class="date"><a href="/?sort=date&page=1" style="text-decoration:none;">최신순</a></li>
-
+    <li role="presentation" class="sort">
+      <a class="link" href="/?sort=score&page=1" style="text-decoration:none;">인기순</a>
+    </li>
+    <li role="presentation" class="date">
+      <a class="link" href="/?sort=date&page=1"  style="text-decoration:none;">최신순</a>
+    </li>
   </ul>
 </div>
-
-	<div class="row placeholders">
+  <div class="row placeholders">
 
 <div class="col-sm-2">
-  <div id="guide-container">
-  <p id="bar"> Best of Ebagu</p>
+  <h5 class="tag-name"> 인기 커뮤니티</h>
+<br />
+<div class="tag-box">
+   <p>hello</p>
+</div>
+<h5 class="tag-named">구독중</h5>
 
-  <ul class="position">
-    <button type="button" class="btn btn-custom1"><a href="#"><span><i class="fa fa-music"></i></span> Music</a></button>
-    <button type="button" class="btn btn-custom1"><a href="#"><span><i class="fa fa-music"></i></span> Music</a></button>
-    <button type="button" class="btn btn-custom1"><a href="#"><span><i class="fa fa-music"></i></span> Music</a></button>
-    <button type="button" class="btn btn-custom1"><a href="#"><span><i class="fa fa-music"></i></span> Music</a></button>
-    <button type="button" class="btn btn-custom1"><a href="#"><span><i class="fa fa-music"></i></span> Music</a></button>
-  </ul>
-            {{favs}}
-
-
+<div id="following-tag-box">
+  <div class="tab-pane{% if active_tab == 'connections' %} active{% endif %}" id="connections">
+        {% for a in following %}
+<a id="following-link" href="{{ a.get_absolute_url }}">{{ a }}</a> 
+<br />
+        {% endfor %}
+  </div>
 </div>
 </div>
 
@@ -55,30 +60,54 @@
 <table class="table">
     {% if posts %}
       {% for post in posts %}
-      <tr class="cell">
+        <tr id="cell">
+          <td class="vert-align">
+  <div class="voting-space">
 
-<td class="vert-align">
-        <div>
-<a href="/post/{{ post.slug }}/vote?is_up=1" class="vote">
- <span class="vote"><i class="fa fa-arrow-up"></i></span></a><br>
+            <a href="/post/{{ post.slug }}/vote?is_up=1" class="vote">
+  <span class="glyphicon glyphicon-triangle-top col-md-12" aria-hidden="true"></span></a>
+            <br />
 
-<span class="number"><h4 id="vote_count_{{ post.slug }}">{{ post.get_vote_count }}</h4></span>     <br>
+<span class="col-md-12" style="height:1px; font-family: 'Passion One', cursive; bottom:10px; padding-left:0.01em;
+"><h4 id="vote_count_{{ post.slug }}">{{ post.get_vote_count }}</h4></span>     <br>
 
 <a href="/post/{{ post.slug }}/vote?is_up=0"  class="vote">
-<span class="vote"><i class="fa fa-arrow-down"></i></span></a>
+<span class="glyphicon glyphicon-triangle-bottom col-md-12" aria-hidden="true"></span></a>
         </div>
-</td>
+          </td>
 
 
 <td class="vert-align">
   {% if post.url %}
-<h4 id="line"><a href="{{ post.url }}" style="margin-left: 15px; text-decoration:none;"> <img src="{{post.image}}" height="85" width="85"/> <span id="title-font">{{ post.title }}</span>
-</a><span style="margin-left: 15px;" class="domain">
-({{ post.domain }})</span><span class="discuss"><a href="{% url 'post' post.slug %}" class="btn btn-default btn-sm">토론장 입장
-</a></span><br><span class="post-info">{{ post.pub_date | timesince }}전/<a href="{% url 'userena_profile_detail' post.moderator.username %}">{{ post.moderator.username }}</a>작성/<i class="fa fa-eye"></i>{{post.views}}/<a href="/category/{{post.category}}">{{post.category}}</a></span>
+      <h4 id="line">
+        <a href="{{ post.url }}" target="_blank" style="margin-left: 15px; text-decoration:none;"> <img src="{{post.image}}" height="85" width="85"/><span id="title-font">
+          {{ post.title }}</span></a>
+        <span style="margin-left: 15px;" class="domain">({{ post.domain }})</span>
+        <span class="discuss" style="color:red;"><a href="{% url 'post' post.slug %}" class="btn btn-warning btn-sm">토론장 입장</a></span>
+        <br />
+        <span class="post-info">{{ post.pub_date | timesince }}전/<a href="{% url 'userena_profile_detail' post.moderator.username %}">{{ post.moderator.username }}</a>작성/<a href="/category/{{post.category}}">{{post.category}}</a></span>
+      </h4>
+
+  {% elif post.video %}
+<h4 id="line">
+      <a href="{% url 'post' post.slug %}" target="_blank" style="margin-left: 15px; text-decoration:none;"> 
+      {% video post.video as my_video %}
+        <img src="{{ my_video.thumbnail }}" height="85" width="85"/>{% endvideo %}
+        <span id="title-font">
+        {{ post.title }}</span></a>
+<span style="margin-left: 15px;" class="domain">({{ post.domain }})</span>       
+<span class="post-info">{{ post.pub_date | timesince }}전/<a href="{% url 'userena_profile_detail' post.moderator.username %}">{{ post.moderator.username }}</a>작성/<a href="/category/{{post.category}}">{{post.category}}</a></span>
+      </h4>
 {% else %}
-<h4><a href="{% url 'post' post.slug %}" style="margin-left: 15px;">{{ post.title }}</a><span style="margin-left: 15px; "class="domain">({{ post.domain }})</span></h4>
-{% endif %}
+<h4 id="line">
+      <a href="{% url 'post' post.slug %}" target="_blank" style="margin-left: 15px; text-decoration:none;"> 
+        <span id="title-font">
+        {{ post.title }}</span></a>
+<span style="margin-left: 15px;" class="domain">({{ post.domain }})</span>       
+<span class="post-info">{{ post.pub_date | timesince }}전/<a href="{% url 'userena_profile_detail' post.moderator.username %}">{{ post.moderator.username }}</a>작성/<a href="/category/{{post.category}}">{{post.category}}</a></span>
+      </h4>
+
+  {% endif %}
 
 
 
@@ -93,36 +122,40 @@
 </table>
 
 </div>
-		<div class="col-sm-3">
-			<div class="row">
-				<a href="/add_category/"><button type="button" class="btn btn-block btn-customm">커뮤니티 만들기</button>
-</a><br />
-			<a href="/add_post/"><button type="button" class="btn btn-block btn-custom">나도 한번 올려봐</button></a>
-				
-                <hr>
-        <p id="ad">사이트 소개 </p>
-      <a href="/search"><button type="button" class="btn btn-block btn-custommm">커뮤니티 찾기</button>
 
-</a>
 
-<h3>Search</h3>
-{% csrf_token %}
-<input type="text" id="search" name="search" onkeyup="handle_keyup()"/>
 
+<div class="col-sm-3">
+  <div class="row">
+    <a href="/add_post/"><button type="button" class="btn btn-block btn-custom"><span id="one">글쓰기share</span></button></a>
+<br />
+<a href="main/search"><button type="button" class="btn btn-block btn-custom"><span id="two">커뮤니티 찾기</span></button></a>
+<br />
+<div id="three"><a href="/add_category/"><button type="button" class="btn btn-block btn-custom"><span id="three">커뮤니티 만들기</span></button>
+</a></div>
+<br />      
+
+<hr>
 <ul id="search-results">
 
 </ul>
 <hr>
 <div id="ad1">
+
 </div>
 
-     
-            
-		</div>
-	</div>
-		</div>
-    </div>
-		{% include 'main/paginator.html' %}
+</div>
+</div>
+    
+
+</div>
+
+
+
+
+    {% include 'main/paginator.html' %}
         {% include 'footer.html' %}
 
 {%endblock%}
+
+

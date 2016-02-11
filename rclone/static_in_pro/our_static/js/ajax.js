@@ -11,9 +11,9 @@ function handle_keyup() {
            dataType: 'html'
        });
        
-   });
+   };
 
-}
+
 function searchSuccess(data, textStatus, jqXHR)
 {
    $('#search-results').html(data);

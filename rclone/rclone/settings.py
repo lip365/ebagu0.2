@@ -38,9 +38,12 @@ INSTALLED_APPS = (
 	'django.contrib.sites',
 	'main',
 	'accounts',
-	'favorites',
-	'actstream',
-	
+
+	'django_select2',
+	'crispy_forms',	
+	'django_wysiwyg',
+	'ckeditor',
+	'ckeditor_uploader',
 
 	#3rd party apps
 	
@@ -52,15 +55,23 @@ INSTALLED_APPS = (
 	'disqus',
 	'envelope',
 	'honeypot',
-	'froala_editor',
 	'whoosh',
 	'haystack',
 	'tastypie',
-	'django_select2'
-
-	
-
+	'djcelery',
+	'froala_editor',
+	'django_summernote',
+	'redactor',
+	'embed_video',
+    'tinymce',
+    'actstream',
+    'follow',
+    'annoying',
+    'mptt',
+    'comments',
 )
+COMMENTS_APP = 'comments'
+
 
 MIDDLEWARE_CLASSES = (
 	'django.contrib.sessions.middleware.SessionMiddleware',
@@ -166,22 +177,10 @@ SITE_ID = 1
 
 HONEYPOT_FIELD_NAME = 'email2'
 
+
 DISQUS_API_KEY = 'MWIe4SAYeXBPqYEQs60rlo4GF85VAt952ITY7zHasQEI0yAe8iTem48b3IkPQd5a'
 DISQUS_SECRET_KEY = 'niGpR5Gx0yJiVFOF02RtlfFCda5kOTirGXeJ1boU9EoUITTg1HsYDSTFiv8xZCqg'
 DISQUS_WEBSITE_SHORTNAME = 'ebagu'
-
-
-
-FROALA_EDITOR_BUTTONS = ('bold', 'italic', 'strikeThrough', 'underline', '|', 'color', 'fontSize', 'paragraphFormat', 'align',
-						 'formatOL', 'formatUL',  '|', 'insertImage', 'insertLink', 'quote', 'insertHR', '|', 'undo', 'redo', 'clearFormatting', '|' , 'html', 'fullscreen')
-FROALA_EDITOR_OPTIONS = {
-	'language': 'ko',
-	'heightMin': 500,
-	'toolbarButtons': FROALA_EDITOR_BUTTONS
-}
-FROALA_EDITOR_PLUGINS = ('align', 'char_counter', 'code_view', 'colors', 'file',
-		'font_size','image', 'link', 'lists', 'paragraph_format', 'quote', 'table', 'url', 'fullscreen')
-FROALA_EDITOR_THEME = 'gray'
 
 
 
@@ -204,3 +203,42 @@ LANGUAGES = (
 LOCALE_PATHS = (
 	os.path.join(BASE_DIR, 'locale'),
 )
+
+
+# CELERY STUFF
+BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Africa/Nairobi'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+
+REDACTOR_OPTIONS = {'lang': 'ko', }
+REDACTOR_AUTH_DECORATOR = 'django.contrib.auth.decorators.login_required'
+REDACTOR_UPLOAD = 'media/'
+REDACTOR_UPLOAD_HANDLER = 'redactor.handlers.SimpleUploader'
+
+
+CKEDITOR_UPLOAD_PATH = "media/"
+CKEDITOR_IMAGE_BACKEND = "pillow"
+CKEDITOR_ALLOW_NONIMAGE_FILES = False 
+CKEDITOR_RESTRICT_BY_USER = True
+CKEDITOR_REQUIRE_STAFF=False
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Full',
+        'uiColor': '#9AB8F3',
+
+
+    },
+}
+ACTSTREAM_SETTINGS = {
+    #'MANAGER': 'main.managers.MyActionManager',
+    'FETCH_RELATIONS': True,
+    'USE_PREFETCH': True,
+    'USE_JSONFIELD': True,
+    'GFK_FETCH_DEPTH': 1,
+}

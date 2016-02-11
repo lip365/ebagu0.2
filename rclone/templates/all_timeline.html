@@ -1,11 +1,9 @@
-
 {% extends 'base.html' %}
 {% load activity_tags %}
 
 {% block content %}
     <div style="float:right">Signed in as {{ request.user }}</div>
-    <br style="clear: both">
-
+  
     {% for activity in activities %}
         {{ activity }}
         <hr>

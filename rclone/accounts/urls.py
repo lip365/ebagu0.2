@@ -1,8 +1,13 @@
+'''
 from django.conf.urls import patterns, url
+from accounts.forms import EditProfileFormExtra
 	
 urlpatterns = patterns(
     '',
-	url(r'^accounts/(?P<username>[\.\w-]+)/edit/$', 'userena.views.profile_edit', {'edit_profile_form': EditProfileFormExtra}, name='userena_profile_edit'),
+url(r'^(?P<username>[\.\w-]+)/edit/$', 'userena.views.profile_edit', {'edit_profile_form': EditProfileFormExtra}, name='edit-profile'),
+
+   
     
 )
 
+'''

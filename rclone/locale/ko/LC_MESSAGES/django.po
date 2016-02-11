@@ -280,3 +280,9 @@ msgstr "비밀번호 변경"
 
 msgid "Password change successful"
 msgstr "비밀번호를 변경하였습니다."
+
+msgid "Community"
+msgstr "커뮤니티"
+
+msgid "communit"
+msgstr "커뮤니티"

@@ -1,3 +1,4 @@
+'''
 from django.shortcuts import render
 
 # Create your views here.
@@ -7,6 +8,6 @@ def user_created(sender, instance, created, raw, using, **kwargs):
   if created:
     from guardian.shortcuts import assign
     assign('change_profile', instance, instance.get_profile())
-
+'''
 
     

@@ -1,12 +1,33 @@
 {% extends 'base.html' %}
-{% load bootstrap_tags %}
+{% load staticfiles %}
+
+
+{% load crispy_forms_tags %}
+
+{% block head %}
+{{form.media}}
+
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+        <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" type="text/css" media="all" rel="stylesheet" />
+{% endblock %}
+
+
+
+
 
 {% block content %}
-<form id="post_form" method="post" action="/edit/" enctype="multipart/form-data">
-	{% csrf_token %}
-	
-	{{form | as_bootstrap}}
 
-	 <input type="submit" name="submit" value="Create Post">
-	</form>
-	{% endblock %}
+<form id="post_form" method="post" action="/post/{{ post.slug }}/" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form|crispy }}
+<!--{% for tag in person.tags.all %}{{ tag.word }} {% endfor %}-->
+
+     <input type="submit" name="submit" value="Create Post">
+    </form>
+    {% endblock %}
+
+        {% include 'footer.html' %}
+

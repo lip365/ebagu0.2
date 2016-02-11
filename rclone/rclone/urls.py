@@ -5,22 +5,23 @@ from django.contrib import admin
 from django.conf.urls import patterns, url
 from envelope.views import ContactView
 from django.contrib.auth.decorators import login_required as auth
-from accounts.forms import EditProfileFormExtra
+from main import views
+from tastypie.api import Api
 
 
 urlpatterns = [
 	url(r'^admin/', include(admin.site.urls)),
 	url(r'^contact/', include('envelope.urls')),
 	url(r'^select2/', include('django_select2.urls')),
-	url(r'^froala_editor/', include('froala_editor.urls')),
-    url(r'^activity/', include('actstream.urls')),
-
+	url(r'^activity/', include('actstream.urls')),
+	url(r'^ckeditor/', include('ckeditor_uploader.urls')),
 	#url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': MEDIA_ROOT}),
-	url(r'^search/',include('haystack.urls')),
-	url(r'^follow/', include('favorites.urls')),
+	url(r'^main/search/',include('haystack.urls')),
 
-
+    url(r'^accounts/(?P<username>[\.\w-]+)/edit/$',views.profile_edit,
+       name='userena_profile_edit'),
 	url(r'^accounts/', include('userena.urls')),
+
 	url(r'^', include('main.urls')),
 
 

@@ -1,5 +1,5 @@
 {% extends 'base.html'%}
-{% load favorite_tags %}
+{% load embed_video_tags %}
 
 {% block content %}
 
@@ -10,61 +10,71 @@
     <div class="panel-heading">
     <table class="post">
         <tr>
-        	<td class="vert-align"><div>
-                            <a href="/post/{{ post.slug }}/vote?is_up=1" class="vote">
- <span style="font-size:1.5em;" class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span></a>
-                <br>
-                <a href="/post/{{ post.slug }}/vote?is_up=0"  class="vote">
-            <span style="font-size:1.5em;" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></a>
-            </div></td>
+        <td class="vert-align">
+        <div>
+<a href="/post/{{ post.slug }}/vote?is_up=1" class="vote">
+ <span class="vote"><i class="fa fa-arrow-up"></i></span></a><br>
 
-        <td>
-            <h4 id="vote_count_{{ post.id }}">{{ post.get_vote_count }}</h4>
-        </td>
+<span class="number"><h4 id="vote_count_{{ post.slug }}">{{ post.get_vote_count }}</h4></span>     <br>
+
+<a href="/post/{{ post.slug }}/vote?is_up=0"  class="vote">
+<span class="vote"><i class="fa fa-arrow-down"></i></span></a>
+        </div>
+</td>
 
         <td>
             <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+{% video post.video as my_video %}
+ 
+    <img src="{{ my_video.thumbnail }}" /> 
+
+  {% video my_video "large" %}
+{% endvideo %}
             <ol class="breadcrumb">
+
                 <li><span>{{ post.moderator.username }}</span></li>
                 <li><span class="time_presentation">{{ post.pub_date | date }}</span></li>
                 <li><span>조회수 {{ post.views }}</span></li>
+            <i class="fa fa-eye"></i>{{post.views}}/<a href="/category/{{post.category}}">
             </ol>
         </td></tr>
 
     </table>
     </div>
     <div class="panel-body">
-        {{ post.content }}
+        {{ post.content|safe }}
 
-
-
-
-
+      <img src="{{post.thumbnail}}" />
     </div>
     
 
 </div>
 
-	<div id="disqus_thread"></div>
 
-<script>
-/**
-* RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-* LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
-*/
-/*
-var disqus_config = function () {
-this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
-this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-};
-*/
-(function() { // DON'T EDIT BELOW THIS LINE
-var d = document, s = d.createElement('script');
-s.src = '//ebagu.disqus.com/embed.js';
-s.setAttribute('data-timestamp', +new Date());
-(d.head || d.body).appendChild(s);
-})();
-</script>
+<form id="commentForm" class="form-horizontal"
+              action="/post/comment/"
+              data-parent-type="post"
+              data-parent-id="{{ post.slug }}">
+            <fieldset>
+
+                <div class="form-group comment-group">
+                    <label for="commentContent" class="col-lg-2 control-label">New comment</label>
+
+                    <div class="col-lg-10">
+                        <textarea class="form-control" rows="3" id="commentContent"></textarea>
+                        <span id="postResponse" class="text-success" style="display: none"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-10 col-lg-offset-2">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+
+
+        {% include 'comments.html' %}
 
 
 

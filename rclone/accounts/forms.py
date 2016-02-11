@@ -1,5 +1,9 @@
-from userena.forms import EditProfileForm
+from userena import views as userena_views
+from userena.utils import get_profile_model
 
-class EditProfileFormExtra(EditProfileForm):
+class CustomEditProfileForm(userena_views.EditProfileForm):
+    """ Base form used for fields that are always required """
+   
     class Meta:
-      exclude = ['privacy']
+        model = get_profile_model()
+        exclude = ['user', 'privacy']
